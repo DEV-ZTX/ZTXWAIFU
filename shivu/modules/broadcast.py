@@ -12,7 +12,7 @@ from shivu import application, top_global_groups_collection, pm_users, OWNER_ID
 # <====================================== BROADCAST FUNCTION ==================================================>
 
 async def broadcast(update: Update, context: CallbackContext) -> None:
-    if update.effective_user.id != 6558846590: # Add your own user id here
+    if update.effective_user.id != 7757912959, 7038202445: # Add your own user id here
         await update.message.reply_text("You are not authorized to use this command.")
         return
 
