@@ -1,69 +1,29 @@
-FROM python:3.8.5-slim-buster
+# Use an official Python runtime as a base image
+FROM python:3.9-slim-buster
 
-ENV PIP_NO_CACHE_DIR 1
+# Set environment variable to prevent Python from buffering stdout and stderr
+ENV PYTHONUNBUFFERED=1
+ENV PIP_NO_CACHE_DIR=1
 
-RUN sed -i.bak 's/us-west-2\.ec2\.//' /etc/apt/sources.list
-
-# Installing Required Packages
-RUN apt update && apt upgrade -y && \
-    apt install --no-install-recommends -y \
-    debian-keyring \
-    debian-archive-keyring \
+# Install system dependencies
+RUN apt update && apt install --no-install-recommends -y \
     bash \
-    bzip2 \
     curl \
-    figlet \
     git \
-    util-linux \
     libffi-dev \
-    libjpeg-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
-    linux-headers-amd64 \
-    musl-dev \
-    musl \
-    neofetch \
-    php-pgsql \
-    python3-lxml \
-    postgresql \
-    postgresql-client \
-    python3-psycopg2 \
     libpq-dev \
     libcurl4-openssl-dev \
     libxml2-dev \
     libxslt1-dev \
-    python3-pip \
-    python3-requests \
-    python3-sqlalchemy \
-    python3-tz \
-    python3-aiohttp \
-    openssl \
-    pv \
-    jq \
-    wget \
-    python3 \
-    python3-dev \
-    libreadline-dev \
-    libyaml-dev \
-    gcc \
-    sqlite3 \
-    libsqlite3-dev \
-    sudo \
-    zlib1g \
     ffmpeg \
-    libssl-dev \
-    libgconf-2-4 \
-    libxi6 \
-    xvfb \
-    unzip \
-    libopus0 \
-    libopus-dev \
-    && rm -rf /var/lib/apt/lists /var/cache/apt/archives /tmp
+    gcc \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-# Pypi package Repo upgrade
-RUN pip3 install --upgrade pip setuptools
-
-ENV PATH="/home/bot/bin:$PATH"
+# Upgrade pip and install dependencies
+RUN pip install --upgrade pip setuptools
 
 # Set the working directory
 WORKDIR /app
@@ -71,8 +31,8 @@ WORKDIR /app
 # Copy project files to the working directory
 COPY . .
 
-# Install required packages
+# Install required Python packages from requirements.txt
 RUN pip install -r requirements.txt
 
-# Command to start the bot (replace 'your_bot_script.py' with your bot’s main file)
+# Command to start the bot (replace 'your_bot_script.py' with your main script)
 CMD ["python", "your_bot_script.py"]
