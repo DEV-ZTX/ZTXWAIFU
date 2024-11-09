@@ -68,14 +68,11 @@ ENV PATH="/home/bot/bin:$PATH"
 # Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy project files to the working directory
+COPY . .
 
-# Install requirements
-RUN pip3 install -U -r requirements.txt
+# Install required packages
+RUN pip install -r requirements.txt
 
-# Expose the port your app runs on
-EXPOSE 8000
-
-# Starting Worker
-CMD ["python3","-m", "shivu"]
+# Command to start the bot (replace 'your_bot_script.py' with your bot’s main file)
+CMD ["python", "your_bot_script.py"]
