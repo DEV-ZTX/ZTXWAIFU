@@ -39,7 +39,7 @@ async def waifugen(update, context):
     generated_waifus[code] = {'waifu': waifu, 'quantity': quantity}
 
     response_text = (
-        f"Generated waifu:\n`
+        f"Generated waifu:\n"
         f"{code}`\n"
         f"Name: {waifu['name']}\nRarity: {waifu['rarity']}\nQuantity: {quantity}"
     )
