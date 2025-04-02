@@ -56,7 +56,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
             [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
-            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')]
+            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", url=f'https://telegra.ph/G%E1%B4%9C%E1%B4%87ss-T%CA%9C%E1%B4%87-C%E1%B4%8Fs%E1%B4%98%CA%9F%E1%B4%80%CA%8F-B%E1%B4%8F%E1%B4%9B-04-02')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         photo_url = random.choice(PHOTO_URL)
@@ -69,7 +69,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
             [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
-            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
+            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", url=f'https://telegra.ph/G%E1%B4%9C%E1%B4%87ss-T%CA%9C%E1%B4%87-C%E1%B4%8Fs%E1%B4%98%CA%9F%E1%B4%80%CA%8F-B%E1%B4%8F%E1%B4%9B-04-02')],
             [InlineKeyboardButton("✣  ꜱᴛᴀʀᴛ ʙᴏᴛ ɪɴ ᴘᴍ  ✣", url=f'http://t.me/{BOT_USERNAME}?start')],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -156,7 +156,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
             [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
-            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')]
+            [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", url=f'https://telegra.ph/G%E1%B4%9C%E1%B4%87ss-T%CA%9C%E1%B4%87-C%E1%B4%8Fs%E1%B4%98%CA%9F%E1%B4%80%CA%8F-B%E1%B4%8F%E1%B4%9B-04-02')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
 
