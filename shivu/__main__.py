@@ -6,6 +6,7 @@ import asyncio
 from html import escape
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CommandHandler, CallbackContext, MessageHandler, filters
+from telegram.ext import CallbackQueryHandler
 from shivu import (
     collection,
     top_global_groups_collection,
