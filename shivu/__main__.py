@@ -81,7 +81,7 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
-        caption=f"""<b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴄᴏsᴘʟᴀʏ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</b>\n<b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</b>\n<b>/grab ɴᴀᴍᴇ</b>""",
+        caption=f"""<b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴄᴏsᴘʟᴀʏ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</b>\n<b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</b>\n<b>/guess ɴᴀᴍᴇ</b>""",
         parse_mode='HTML')
 
 # Function to handle waifu guessing
@@ -96,37 +96,49 @@ async def guess(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text('❌ Already Guessed By Someone.. Try Next Time')
         return
     
-    guess = ' '.join(context.args).lower() if context.args else ''
+    # Ensure context.args is valid
+    if not context.args:
+        await update.message.reply_text("❌ Please provide a guess.")
+        return
+    
+    guess = ' '.join(context.args).strip().lower()
     if any(banned in guess for banned in ["()", "&"]):
         await update.message.reply_text("❌ Invalid Guess Format")
         return
-
-    character = next(iter(sent_characters[chat_id]), None)
-    if not character:
+    
+    # Ensure sent_characters[chat_id] is a list
+    if not isinstance(sent_characters[chat_id], list) or not sent_characters[chat_id]:
+        await update.message.reply_text("❌ No character available to guess.")
         return
-
-    correct_name = character['name'].lower()
+    
+    character = sent_characters[chat_id][0]  # Ensure it's a dictionary
+    
+    # Ensure character has 'name' key
+    correct_name = character.get('name', '').lower()
+    if not correct_name:
+        await update.message.reply_text("❌ Character data is missing!")
+        return
+    
+    # Check if guess is correct
     if guess in correct_name.split() or guess == correct_name:
         first_correct_guesses[chat_id] = user_id
-        user = await user_collection.find_one({'id': user_id})
         
-        if user:
-            await user_collection.update_one(
-                {'id': user_id}, 
-                {'$push': {'characters': character}}
-            )
-        else:
-            await user_collection.insert_one(
-                {'id': user_id, 'characters': [character]}
-            )
+        # Update user collection
+        await user_collection.update_one(
+            {'id': user_id}, 
+            {'$push': {'characters': character}}, 
+            upsert=True  # Ensure user is created if not found
+        )
         
         keyboard = [[InlineKeyboardButton("See Harem", switch_inline_query_current_chat=f"collection.{user_id}")]]
         await update.message.reply_text(
-            f'<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You Guessed a New Character ✅️\n\n𝗖𝗢𝗦𝗣𝗟𝗔𝗬: <b>{character["name"]}</b>\n𝗔𝗡𝗜𝗠𝗘: <b>{character["anime"]}</b>\n𝗥𝗔𝗜𝗥𝗧𝗬: <b>{character["rarity"]}</b>\n\nCharacter added to Your harem!',
-            parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
-    else:
-        await update.message.reply_text('❌ Incorrect Guess')
-
+            f'<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You Guessed a New Character ✅️\n\n'
+            f'𝗖𝗢𝗦𝗣𝗟𝗔𝗬: <b>{character["name"]}</b>\n'
+            f'𝗔𝗡𝗜𝗠𝗘: <b>{character["anime"]}</b>\n'
+            f'𝗥𝗔𝗜𝗥𝗧𝗬: <b>{character["rarity"]}</b>\n\n'
+            'Character added to Your harem!',
+            parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard)
+        )
 # Function to favorite a character
 async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
