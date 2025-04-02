@@ -6,7 +6,7 @@ from telegram.ext import CommandHandler, CallbackContext
 from shivu import CHARA_CHANNEL_ID, application, user_collection, group_user_totals_collection, top_global_groups_collection
 
 # MongoDB connection
-mongo_url = "mongodb+srv://yunyxedits:assalom%4013@waifudata.vfutysm.mongodb.net/?retryWrites=true&w=majority&appName=waifudata"
+mongo_url = "mongodb+srv://Lord_ichigo:Roshni@cluster0.ytuss.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(mongo_url)
 db = client['Character_catcher']
 collection = db['anime_characters_lol']
@@ -22,7 +22,7 @@ async def export_characters_to_channel(update: Update, context: CallbackContext)
     global uploading
 
     # Check if the user is the admin
-    if update.effective_user.id != 5675252446:
+    if update.effective_user.id != 7757912959:
         await update.message.reply_text("You do not have permission to use this command.")
         return
 
@@ -93,7 +93,7 @@ async def stop_uploading(update: Update, context: CallbackContext):
     global uploading
 
     # Check if the user is the admin
-    if update.effective_user.id != 6558846590:
+    if update.effective_user.id != 7757912959:
         await update.message.reply_text("You do not have permission to use this command.")
         return
 
@@ -103,7 +103,7 @@ async def stop_uploading(update: Update, context: CallbackContext):
 # New command to delete all characters from the MongoDB database
 async def delete_all_characters(update: Update, context: CallbackContext):
     # Check if the user is the admin
-    if update.effective_user.id != 6558846590:
+    if update.effective_user.id != 7757912959:
         await update.message.reply_text("You do not have permission to use this command.")
         return
 
@@ -116,7 +116,7 @@ async def delete_all_characters(update: Update, context: CallbackContext):
 # Add the new command to delete all users and reset leaderboards
 async def delete_users(update: Update, context: CallbackContext):
     # Check if the user is the admin
-    if update.effective_user.id != 6558846590:  # Replace with the actual OWNER_ID
+    if update.effective_user.id != 7757912959:  # Replace with the actual OWNER_ID
         await update.message.reply_text("You do not have permission to use this command.")
         return
 
