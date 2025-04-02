@@ -1,54 +1,79 @@
-#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-# For Waifu/Husbando telegram bots.
-# Updated and Added new commands, features and style by https://github.com/lovetheticx
-#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 
-# <============================================== IMPORTS =========================================================>
+from pymongo import ReturnDocument
+from telegram import Update
+from telegram.ext import CommandHandler, CallbackContext
+from shivu import application, OWNER_ID, user_totals_collection
 
-from pymongo import  ReturnDocument
-from pyrogram.enums import ChatMemberStatus, ChatType
-from shivu import user_totals_collection, shivuu
-from pyrogram import Client, filters
-from pyrogram.types import Message
-
-ADMINS = [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.OWNER]
-
-# <======================================= CHANGETIME FUNCTION ==================================================>
-
-@shivuu.on_message(filters.command("changetime"))
-async def change_time(client: Client, message: Message):
-    
-    user_id = message.from_user.id
-    chat_id = message.chat.id
-    member = await shivuu.get_chat_member(chat_id,user_id)
-        
-
-    if member.status not in ADMINS :
-        await message.reply_text('⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n⛔️ 𝗬𝗢𝗨 𝗔𝗥𝗘 𝗡𝗢𝗧 𝗔𝗗𝗠𝗜𝗡\n⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋ ')
-        return
+async def change_time(update: Update, context: CallbackContext) -> None:
+    user = update.effective_user
+    chat = update.effective_chat
 
     try:
-        args = message.command
-        if len(args) != 2:
-            await message.reply_text('⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n⚠️ Please write like this to change spawn time:\n/changetime 100 | 200 | 300. . .\n⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋')
+        member = await chat.get_member(user.id)
+        if member.status not in ('administrator', 'creator'):
+            await update.message.reply_text('You do not have permission to use this command.')
             return
 
-        new_frequency = int(args[1])
+        args = context.args
+        if len(args) != 1:
+            await update.message.reply_text('Incorrect format. Please use: /changetime NUMBER')
+            return
+
+        new_frequency = int(args[0])
         if new_frequency < 100:
-            await message.reply_text('⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n⚠️ 𝗧𝗛𝗘 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 𝗙𝗥𝗘𝗤𝗨𝗘𝗡𝗖𝗬\n 𝗠𝗨𝗦𝗧 𝗕𝗘 𝗚𝗥𝗘𝗔𝗧𝗘𝗥 𝗧𝗛𝗔𝗡 𝗢𝗥\n 𝗘𝗤𝗨𝗔𝗟 𝗧𝗢 𝟭𝟬𝟬\n⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋ ')
+            await update.message.reply_text('The message frequency must be greater than or equal to 100.')
             return
 
-    
+        if new_frequency > 10000:
+            await update.message.reply_text('Thats too much buddy. Use below 10000')
+            return
+
         chat_frequency = await user_totals_collection.find_one_and_update(
-            {'chat_id': str(chat_id)},
+            {'chat_id': str(chat.id)},
             {'$set': {'message_frequency': new_frequency}},
             upsert=True,
             return_document=ReturnDocument.AFTER
         )
 
-        await message.reply_text(f'⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n❇️ 𝗦𝗨𝗖𝗖𝗘𝗦𝗦𝗙𝗨𝗟𝗟𝗬 𝗖𝗛𝗔𝗡𝗚𝗘𝗗 𝗧𝗢 {new_frequency}\n 𝗡𝗢𝗪 𝗬𝗢𝗨 𝗖𝗔𝗡 𝗚𝗘𝗧 𝗪𝗔𝗜𝗙𝗨\n 𝗘𝗩𝗘𝗥𝗬 𝟭𝟬𝟬 𝗠𝗘𝗦𝗦𝗔𝗚𝗘𝗦!\n⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋')
+        await update.message.reply_text(f'Successfully changed character appearance frequency to every {new_frequency} messages.')
     except Exception as e:
-        await message.reply_text(f'⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n🛑 Failed to change {str(e)}⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋')
+        await update.message.reply_text('Failed to change character appearance frequency.')
 
-# <=============================================== END ==========================================================>
-# by https://github.com/lovetheticx        
+
+async def change_time_sudo(update: Update, context: CallbackContext) -> None:
+    sudo_user_ids = {7678359785}
+    user = update.effective_user
+
+    try:
+        if user.id not in sudo_user_ids:
+            await update.message.reply_text('You do not have permission to use this command.')
+            return
+
+        args = context.args
+        if len(args) != 1:
+            await update.message.reply_text('Incorrect format. Please use: /changetime NUMBER')
+            return
+
+        new_frequency = int(args[0])
+        if new_frequency < 1:
+            await update.message.reply_text('The message frequency must be greater than or equal to 1.')
+            return
+
+        if new_frequency > 10000:
+            await update.message.reply_text('Thats too much buddy. Use below 10000')
+            return
+
+        chat_frequency = await user_totals_collection.find_one_and_update(
+            {'chat_id': str(update.effective_chat.id)},
+            {'$set': {'message_frequency': new_frequency}},
+            upsert=True,
+            return_document=ReturnDocument.AFTER
+        )
+
+        await update.message.reply_text(f'Successfully changed character appearance frequency to every {new_frequency} messages.')
+    except Exception as e:
+        await update.message.reply_text('Failed to change character appearance frequency.')
+
+
+application.add_handler(CommandHandler("ctime", change_time_sudo, block=False))
+application.add_handler(CommandHandler("changetime", change_time, block=False))
