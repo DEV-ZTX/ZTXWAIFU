@@ -8,7 +8,7 @@ from html import escape
 from datetime import datetime, timedelta
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-DEVS = (6558846590)
+DEVS = (7757912959)
 
 @bot.on_message(filters.command(["waifufind"]))
 async def waifufind(_, message: t.Message):
