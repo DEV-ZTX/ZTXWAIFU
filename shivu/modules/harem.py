@@ -1,4 +1,4 @@
-#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+l#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 # For Waifu/Husbando telegram bots.
 # Speacial thanks for this amazing repo: https://github.com/MyNameIsShekhar
 # Updated and Added new commands, features and style by https://github.com/lovetheticx
@@ -139,6 +139,21 @@ async def haremmode(update: Update, context: CallbackContext):
         await update.callback_query.message.reply_photo(photo=picture_url, caption="<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>\n<b>◈ ꜱᴇʟᴇᴄᴛ ᴀ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ:</b> \n<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>", reply_markup=reply_markup, parse_mode='HTML')
 
 # <========================================== Haremmode Callback =====================================================>
+    
+async def change_rarity_mode_callback(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    user_id = update.effective_user.id
+
+    # Retrieve the ID of the user who issued the /harem command
+    harem_owner_id = context.user_data.get("harem_owner_id")
+
+    # Check if the user pressing the button is the harem owner
+    if user_id != harem_owner_id:
+        await query.answer("𝗗𝗢𝗡𝗧 𝗧𝗢𝗨𝗖𝗛 𝗔𝗪𝗪 💢", show_alert=True)
+        return
+
+    # Continue with changing the rarity mode
+    await haremmode(update, context)
         
 async def haremmode_callback(update: Update, context: CallbackContext):
     query = update.callback_query
@@ -162,6 +177,8 @@ async def haremmode_callback(update: Update, context: CallbackContext):
     await update_user_rarity_mode(user_id, rarity_mode)
     await harem(update, context)
 
+
+# <======================================== Haremmode Command ===================================================>
 # <==================================== Getting for User Rarity Mode ==================================================>
     
 async def get_user_rarity_mode(user_id: int) -> str:
