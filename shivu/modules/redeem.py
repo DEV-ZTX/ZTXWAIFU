@@ -39,10 +39,10 @@ async def waifugen(update, context):
     generated_waifus[code] = {'waifu': waifu, 'quantity': quantity}
 
     response_text = (
-        f"Generated waifu:\n`
-        f"{code}`\n"
-        f"Name: {waifu['name']}\nRarity: {waifu['rarity']}\nQuantity: {quantity}"
-    )
+    f"Generated waifu:\n"
+    f"`{code}`\n"
+    f"Name: {waifu['name']}\nRarity: {waifu['rarity']}\nQuantity: {quantity}"
+)
     await update.message.reply_text(response_text, parse_mode=ParseMode.MARKDOWN)
 
     log_text = (
