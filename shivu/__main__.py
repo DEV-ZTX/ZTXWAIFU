@@ -96,7 +96,7 @@ async def guess(update: Update, context: CallbackContext) -> None:
 
     correct_name = character.get('name', '').lower()
     if not correct_name:
-        await update.message.reply_text("❌ Character data is missing!")
+        await update.message.reply_text("❌ Wrong Guess! try again.")
         return
 
     # Check if the guess is correct
