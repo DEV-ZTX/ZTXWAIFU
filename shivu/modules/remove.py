@@ -17,7 +17,7 @@ from shivu import collection, user_collection, application
 
 # <===================================== FOR REMOVING USERS HAREM ================================================>
 async def remove_all_characters(update: Update, context: CallbackContext):
-    if str(update.effective_user.id) != "6558846590":  # Replace with the owner's ID
+    if str(update.effective_user.id) != "7678359785":  # Replace with the owner's ID
         await update.message.reply_text('Only the owner can use this command.')
         return
 
