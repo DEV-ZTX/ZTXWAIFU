@@ -3,21 +3,23 @@ import time
 import random
 import re
 import asyncio
-from html import escape 
-import threading
-import os
-import http.server
-import socketserver
-
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from telegram import Update
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, CallbackQueryHandler, filters 
-
-from shivu import collection, top_global_groups_collection, group_user_totals_collection, user_collection, user_totals_collection, shivuu
-from shivu import application, SUPPORT_CHAT, UPDATE_CHAT, db, LOGGER
+from html import escape
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, filters
+from shivu import (
+    collection,
+    top_global_groups_collection,
+    group_user_totals_collection,
+    user_collection,
+    user_totals_collection,
+    shivuu,
+    application,
+    SUPPORT_CHAT,
+    UPDATE_CHAT,
+    db,
+    LOGGER
+)
 from shivu.modules import ALL_MODULES
-
-
 locks = {}
 message_counters = {}
 spam_counters = {}
@@ -40,13 +42,9 @@ threading.Thread(target=run_server).start()"""
 for module_name in ALL_MODULES:
     imported_module = importlib.import_module("shivu.modules." + module_name)
 
-
-last_user = {}
-warned_users = {}
 def escape_markdown(text):
     escape_chars = r'\*_`\\~>#+-=|{}.!'
     return re.sub(r'([%s])' % re.escape(escape_chars), r'\\\1', text)
-
 
 async def message_counter(update: Update, context: CallbackContext) -> None:
     chat_id = str(update.effective_chat.id)
@@ -73,7 +71,7 @@ async def message_counter(update: Update, context: CallbackContext) -> None:
                     return
                 else:
                     
-                    await update.message.reply_html(f"<blockquote><b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</blockquote></b>")
+                    await update.message.reply_html(f"<b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</b>")
                     warned_users[user_id] = time.time()
                     return
         else:
@@ -114,7 +112,7 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
-        caption=f"""<blockquote><b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</blockquote></b>\n<blockquote><b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</blockquote></b>\n<blockquote><b>/grab ɴᴀᴍᴇ</blockquote></b>""",
+        caption=f"""<b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</b>\n<b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</b>\n<b>/guess ɴᴀᴍᴇ</b>""",
         parse_mode='HTML')
 
 
@@ -163,7 +161,7 @@ async def guess(update: Update, context: CallbackContext) -> None:
 
         keyboard = [[InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ", switch_inline_query_current_chat=f"collection.{user_id}")]]
 
-        await update.message.reply_text(f'<blockquote><b>✅<a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a> You got a new character!</blockquote></b> \n\n<blockquote><b>🌸𝗡𝗔𝗠𝗘: {last_characters[chat_id]["name"]}</blockquote></b> \n<blockquote><b>❇️𝗔𝗡𝗜𝗠𝗘: {last_characters[chat_id]["anime"]}</blockquote></b> \n<blockquote><b>{last_characters[chat_id]["rarity"][0]}𝗥𝗔𝗜𝗥𝗧𝗬: {last_characters[chat_id]["rarity"]}</blockquote></b>\n\n<blockquote><b>⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds</blockquote></b>', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
+        await update.message.reply_text(f'✅ <b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You got a new character! \n\n🌸𝗡𝗔𝗠𝗘: <b>{last_characters[chat_id]["name"]}</b> \n❇️𝗔𝗡𝗜𝗠𝗘: <b>{last_characters[chat_id]["anime"]}</b> \n{last_characters[chat_id]["rarity"][0]}𝗥𝗔𝗜𝗥𝗧𝗬: <b>{last_characters[chat_id]["rarity"]}</b> \n\n⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
     else:
         await update.message.reply_text('❌️<b>ᴄʜᴀʀᴀᴄᴛᴇʀ ɴᴀᴍᴇ ɪs ɴᴏᴛ ᴄᴏʀʀᴇᴄᴛ.ᴛʀʏ ɢᴜᴇssɪɴɢ ᴛʜᴇ ɴᴀᴍᴇ ᴀɢᴀɪɴ!</b>', parse_mode='HTML')
@@ -231,7 +229,7 @@ async def fav(update: Update, context: CallbackContext) -> None:
 
     await update.message.reply_photo(
         photo=character["img_url"],
-        caption=f"<blockquote><b>Do you want to make this cosplay your favorite..!</blockquote></b>\n↬ <code>{character['name']}</code> <code>({character['anime']})</code>",
+        caption=f"<b>Do you want to make this cosplay your favorite..!</b>\n↬ <code>{character['name']}</code> <code>({character['anime']})</code>",
         reply_markup=reply_markup,
         parse_mode='HTML'
     )
