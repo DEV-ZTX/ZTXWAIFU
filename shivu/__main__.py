@@ -6,18 +6,43 @@ import asyncio
 from html import escape 
 import threading
 import os
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import CommandHandler, CallbackContext, MessageHandler, CallbackQueryHandler, filters, InlineQueryHandler
-from shivu import collection, user_collection, application
+import http.server
+import socketserver
 
-# Caches for faster queries
-all_characters_cache = {}
-user_collection_cache = {}
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update
+from telegram.ext import CommandHandler, CallbackContext, MessageHandler, CallbackQueryHandler, filters 
+
+from shivu import collection, top_global_groups_collection, group_user_totals_collection, user_collection, user_totals_collection, shivuu
+from shivu import application, SUPPORT_CHAT, UPDATE_CHAT, db, LOGGER
+from shivu.modules import ALL_MODULES
+
 
 locks = {}
-message_counts = {}
+message_counters = {}
+spam_counters = {}
+last_characters = {}
 sent_characters = {}
 first_correct_guesses = {}
+message_counts = {}
+
+# Function to run the HTTP server
+"""def run_server():
+    PORT = int(os.getenv('PORT', 4000))  # Default to port 4000 if PORT is not set
+    handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), handler) as httpd:
+        print(f"Serving on port {PORT}")
+        httpd.serve_forever()
+
+# Start the HTTP server in a separate thread
+threading.Thread(target=run_server).start()"""
+
+for module_name in ALL_MODULES:
+    imported_module = importlib.import_module("shivu.modules." + module_name)
+
+
+last_user = {}
+warned_users = {}
 
 def escape_markdown(text):
     escape_chars = r'\*_`\\~>#+-=|{}.!'
