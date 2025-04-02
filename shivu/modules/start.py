@@ -43,16 +43,14 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     if update.effective_chat.type == "private":
         caption = f"""
-🍃 <b>ɢʀᴇᴇᴛɪɴɢꜱ, ɪ'ᴍ ˹ʜσѕιησ ʜαяєм˼ 🫧, ɴɪᴄᴇ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ!</b>
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
 
-<b>━━━━━━━▧▣▧━━━━━━━</b>
-<b>⦾ ᴡʜᴀᴛ ɪ ᴅᴏ: ɪ sᴘᴀᴡɴ   
-     ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ғᴏʀ
-     ᴜsᴇʀs ᴛᴏ ɢʀᴀʙ.</b>
-<b>⦾ ᴛᴏ ᴜsᴇ ᴍᴇ: ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ
-     ɢʀᴏᴜᴘ ᴀɴᴅ ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ
-     ʙᴜᴛᴛᴏɴ ғᴏʀ ᴅᴇᴛᴀɪʟs.</b>
-<b>━━━━━━━▧▣▧━━━━━━━</b>
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
+<blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
+<blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
+Use <code>/guess</code> to collect your favorite characters and view them with <code>/harem</code>.\n
+๏ Time to build your ultimate Cosplay Gallery!</b></blockquote>
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 """
 
         keyboard = [
@@ -80,16 +78,14 @@ async def start(update: Update, context: CallbackContext) -> None:
     chat_id=update.effective_chat.id,
     photo=photo_url,
     caption=f"""
-<b>🍃 ɢʀᴇᴇᴛɪɴɢꜱ, ɪ'ᴍ ˹ʜσѕιησ ʜαяєм˼ 🫧, ɴɪᴄᴇ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ!</b>
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
 
-<b>━━━━━━━▧▣▧━━━━━━━</b>
-<b>⦾ ᴡʜᴀᴛ ɪ ᴅᴏ: ɪ sᴘᴀᴡɴ   
-     ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ғᴏʀ
-     ᴜsᴇʀs ᴛᴏ ɢʀᴀʙ.</b>
-<b>⦾ ᴛᴏ ᴜsᴇ ᴍᴇ: ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ
-     ɢʀᴏᴜᴘ ᴀɴᴅ ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ
-     ʙᴜᴛᴛᴏɴ ғᴏʀ ᴅᴇᴛᴀɪʟs.</b>
-<b>━━━━━━━▧▣▧━━━━━━━</b>
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
+<blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
+<blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
+Use <code>/guess</code> to collect your favorite characters and view them with <code>/harem</code>.\n
+๏ Time to build your ultimate Cosplay Gallery!</b></blockquote>
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 """,
     parse_mode="HTML",
     reply_markup=reply_markup
@@ -102,7 +98,7 @@ async def help(update: Update, context: CallbackContext) -> None:
     ➲ Below are the commands for users:
 
     ━━━━━━━ᴄᴏᴍᴍᴀɴᴅꜱ━━━━━━━
-    ⎆ /grab : ᴛᴏ ɢʀᴀʙ ᴀ ᴡᴀɪꜰᴜ
+    ⎆ /guess : ᴛᴏ ɢʀᴀʙ ᴀ ᴡᴀɪꜰᴜ
     ⎆ /harem : ᴛᴏ ꜱᴇᴇ ʏᴏᴜʀ ɢʀᴀʙʙᴇᴅ ᴡᴀɪꜰᴜ
     ⎆ /wmode : ᴛᴏ ᴄʜᴀɴɢᴇ ᴡᴀɪꜰᴜ ᴍᴏᴅᴇ
     ⎆ /fav : ᴛᴏ ᴍᴀᴋᴇ ᴀ ᴡᴀɪꜰᴜ ʏᴏᴜʀ ꜰᴀᴠᴏᴜʀɪᴛᴇ
@@ -132,7 +128,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 ➲ Below are the commands for users:
 
 ━━━━━━━ᴄᴏᴍᴍᴀɴᴅꜱ━━━━━━━
-⎆ /grab : ᴛᴏ ɢʀᴀʙ ᴀ ᴡᴀɪꜰᴜ
+⎆ /guess : ᴛᴏ ɢʀᴀʙ ᴀ ᴡᴀɪꜰᴜ
 ⎆ /harem : ᴛᴏ ꜱᴇᴇ ʏᴏᴜʀ ɢʀᴀʙʙᴇᴅ ᴡᴀɪꜰᴜ
 ⎆ /fav : ᴛᴏ ᴍᴀᴋᴇ ᴀ ᴡᴀɪꜰᴜ ʏᴏᴜʀ ꜰᴀᴠᴏᴜʀɪᴛᴇ
 ⎆ /gift : ᴛᴏ ɢɪꜰᴛ ᴀ ᴡᴀɪꜰᴜ
@@ -149,16 +145,14 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     elif query.data == 'back':
         caption = """
-🍃 ɢʀᴇᴇᴛɪɴɢꜱ, ɪ'ᴍ ˹ʜσѕιησ ʜαяєм˼ 🫧, ɴɪᴄᴇ ᴛᴏ ᴍᴇᴇᴛ ʏᴏᴜ!
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
 
-━━━━━━━▧▣▧━━━━━━━
-⦾ ᴡʜᴀᴛ ɪ ᴅᴏ: ɪ sᴘᴀᴡɴ   
-     ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ᴄʜᴀᴛ ғᴏʀ
-     ᴜsᴇʀs ᴛᴏ ɢʀᴀʙ.
-⦾ ᴛᴏ ᴜsᴇ ᴍᴇ: ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ
-     ɢʀᴏᴜᴘ ᴀɴᴅ ᴛᴀᴘ ᴛʜᴇ ʜᴇʟᴘ
-     ʙᴜᴛᴛᴏɴ ғᴏʀ ᴅᴇᴛᴀɪʟs.
-━━━━━━━▧▣▧━━━━━━━
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
+<blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
+<blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
+Use <code>/guess</code> to collect your favorite characters and view them with <code>/harem</code>.\n
+๏ Time to build your ultimate Cosplay Gallery!</b></blockquote>
+<b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 """
 
         keyboard = [
