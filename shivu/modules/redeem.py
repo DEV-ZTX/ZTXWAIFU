@@ -79,7 +79,7 @@ async def claimwaifu(update, context):
                 f"Congratulations {user_mention}! You have received a new waifu for your harem 💍!\n"
                 f"⛩ Name: {waifu['name']}\n"
                 f"{waifu['rarity'][0]}Rarity: {waifu['rarity'][2:]}\n"
-                f"💮 Anime: {waifu['anime']}\n"
+                f"🥀 Anime: {waifu['anime']}\n"
             )
             await update.message.reply_photo(photo=waifu['img_url'], caption=response_text, parse_mode=ParseMode.MARKDOWN)
 
