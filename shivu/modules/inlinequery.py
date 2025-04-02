@@ -313,7 +313,7 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
 async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    character_id = query.data.split('_')[2]
+    character_id = int(query.data.split('_')[2])  # Convert to integer
 
     # Fetch top 10 users who grabbed this character
     cursor = user_collection.aggregate([
@@ -353,7 +353,7 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
 
 async def show_character_info(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    character_id = query.data.split('_')[2]
+    character_id = int(query.data.split('_')[2])  # Convert to integer
 
     # Fetch character information
     character = await collection.find_one({'id': character_id})
