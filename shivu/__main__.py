@@ -62,17 +62,24 @@ async def message_counter(update: Update, context: CallbackContext) -> None:
 async def send_image(update: Update, context: CallbackContext) -> None:
     chat_id = update.effective_chat.id
     all_characters = list(await collection.find({}).to_list(length=None))
+    
     if chat_id not in sent_characters:
         sent_characters[chat_id] = {}
+
     character = random.choice([c for c in all_characters if c['id'] not in sent_characters[chat_id]])
-    sent_characters[chat_id][character['id']] = time.time()
+    
+    # Store entire character data instead of just the ID
+    sent_characters[chat_id] = character  
+
     if chat_id in first_correct_guesses:
         del first_correct_guesses[chat_id]
+
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
         caption=f"""<b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴄᴏsᴘʟᴀʏ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</b>\n<b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</b>\n<b>/guess ɴᴀᴍᴇ</b>""",
-        parse_mode='HTML')
+        parse_mode='HTML'
+    )
 
 async def guess(update: Update, context: CallbackContext) -> None:
     chat_id = update.effective_chat.id
@@ -82,9 +89,8 @@ async def guess(update: Update, context: CallbackContext) -> None:
         await update.message.reply_text("❌ No character available to guess.")
         return
 
-    character = sent_characters[chat_id]  # Retrieve the character
+    character = sent_characters[chat_id]  # Retrieve character object
 
-    # Ensure context.args is valid
     if not context.args:
         await update.message.reply_text("❌ Please provide a guess.")
         return
@@ -95,15 +101,12 @@ async def guess(update: Update, context: CallbackContext) -> None:
         return
 
     correct_name = character.get('name', '').lower()
-    if not correct_name:
-        await update.message.reply_text("❌ Wrong Guess! try again.")
-        return
+    name_variations = {correct_name, correct_name.replace(" ", ""), correct_name.replace("-", " "), correct_name.replace(".", "").strip()}
 
-    # Check if the guess is correct
-    if guess in correct_name.split() or guess == correct_name:
+    # Flexible Matching
+    if guess in name_variations or any(guess == name_part for name_part in correct_name.split()):
         first_correct_guesses[chat_id] = user_id
-        
-        # Store character in user's collection
+
         await user_collection.update_one(
             {'id': user_id}, 
             {'$push': {'characters': character}}, 
@@ -121,23 +124,8 @@ async def guess(update: Update, context: CallbackContext) -> None:
             'Character added to Your harem!',
             parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard)
         )
-
-async def fav(update: Update, context: CallbackContext) -> None:
-    user_id = update.effective_user.id
-    if not context.args:
-        await update.message.reply_text('❌ Please provide a Character ID')
-        return
-    character_id = context.args[0]
-    user = await user_collection.find_one({'id': user_id})
-    if not user:
-        await update.message.reply_text('❌ No Characters in Your Collection')
-        return
-    if not any(c['id'] == character_id for c in user['characters']):
-        await update.message.reply_text('❌ Character Not Found in Your Collection')
-        return
-    await user_collection.update_one({'id': user_id}, {'$addToSet': {'favorites': character_id}})
-    await update.message.reply_text(f'⭐ Character {character_id} added to Favorites')
-
+    else:
+        await update.message.reply_text("❌ Wrong guess! Try again.")
 async def inlinequery(update: Update, context: CallbackContext) -> None:
     query = update.inline_query.query
     results = []
