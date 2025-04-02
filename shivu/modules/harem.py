@@ -131,7 +131,7 @@ async def haremmode(update: Update, context: CallbackContext):
     ])
     
     #picture_url = random.choice(Config.PHOTO_URL)    #REMOVE "#" set random picture from your config.py
-    picture_url = 'https://ibb.co/q7jzMwz'
+    picture_url = 'https://graph.org/file/992f31b75e3fa1ebed9f8-43f6c2e69aafb3928a.jpg'
     
     if update.message:
         await update.message.reply_photo(photo=picture_url, caption="<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>\n<b>◈ ꜱᴇʟᴇᴄᴛ ᴀ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ:</b> \n<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>", reply_markup=reply_markup, parse_mode='HTML')
