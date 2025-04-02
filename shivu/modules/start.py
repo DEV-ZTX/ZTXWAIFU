@@ -43,8 +43,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     if update.effective_chat.type == "private":
         caption = f"""
-<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
-
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>
 <b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 <blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
 <blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
@@ -78,8 +77,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
     chat_id=update.effective_chat.id,
     photo=photo_url,
     caption=f"""
-<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
-
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>
 <b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 <blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
 <blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
@@ -145,8 +143,7 @@ async def button(update: Update, context: CallbackContext) -> None:
 
     elif query.data == 'back':
         caption = """
-<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>\n\n
-
+<blockquote><b>🍃 Welcome, Cosplay Enthusiast!</b></blockquote>
 <b>━━━━━━━*.·:·.✧ ✦ ✧.·:·.*━━━━━━━</b>
 <blockquote><b>❍ I am the Ultimate Cosplay Character Collector Bot!</b></blockquote>\n
 <blockquote><b>Add me to your group, and I'll drop random Cosplay Character images every 100 messages!\n
