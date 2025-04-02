@@ -73,7 +73,7 @@ async def message_counter(update: Update, context: CallbackContext) -> None:
                     return
                 else:
                     
-                    await update.message.reply_html(f"<b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</b>")
+                    await update.message.reply_html(f"<blockquote><b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</blockquote><b>")
                     warned_users[user_id] = time.time()
                     return
         else:
@@ -114,7 +114,7 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
-        caption=f"""<b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</b>\n<b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</b>\n<b>/grab ɴᴀᴍᴇ</b>""",
+        caption=f"""<blockquote><b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</blockquote><b>\n<blockquote><b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</blockquote><b>\n<blockquote><b>/grab ɴᴀᴍᴇ</blockquote><b>""",
         parse_mode='HTML')
 
 
