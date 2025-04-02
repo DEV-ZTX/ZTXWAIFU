@@ -138,6 +138,23 @@ async def haremmode(update: Update, context: CallbackContext):
     else:
         await update.callback_query.message.reply_photo(photo=picture_url, caption="<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>\n<b>◈ ꜱᴇʟᴇᴄᴛ ᴀ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ:</b> \n<b>⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋</b>", reply_markup=reply_markup, parse_mode='HTML')
 
+# <============================================== Harem Callback =========================================================>
+        
+async def harem_callback(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    try:
+        _, page, user_id = query.data.split(':')
+        page = int(page)
+        user_id = int(user_id)
+    except ValueError:
+        await query.answer("Invalid callback data", show_alert=True)
+        return
+
+    if query.from_user.id != user_id:
+        await query.answer("𝗗𝗢𝗡𝗧 𝗧𝗢𝗨𝗖𝗛 𝗔𝗪𝗪 💢", show_alert=True)
+        return
+
+    await harem(update, context, page)
 # <========================================== Haremmode Callback =====================================================>
     
 async def change_rarity_mode_callback(update: Update, context: CallbackContext) -> None:
