@@ -4,7 +4,7 @@ from telegram.ext import CommandHandler, CallbackContext
 from shivu import user_collection, collection
 from datetime import datetime, timedelta
 
-SUDO_USERS = [6558846590]  # Sudo users who can bypass bans
+SUDO_USERS = [7757912959]  # Sudo users who can bypass bans
 
 # Dictionary to store ban information
 ban_info = {}
