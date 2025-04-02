@@ -1,3 +1,8 @@
+#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+# For Waifu/Husbando telegram bots.
+# Updated and Added new commands, features and style by https://github.com/lovetheticx
+#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+
 from pyrogram import Client, filters
 from shivu import db, collection, top_global_groups_collection, group_user_totals_collection, user_collection, user_totals_collection
 import asyncio
@@ -6,6 +11,7 @@ from shivu import sudo_users
 
 DEV_LIST = [7678359785, 7757912959]
 
+# <======================================= GIVE COMMAND ==================================================>
 async def give_character(receiver_id, character_id):
     character = await collection.find_one({'id': character_id})
 
@@ -18,12 +24,12 @@ async def give_character(receiver_id, character_id):
 
             img_url = character['img_url']
             caption = (
-                f"<blockquote><b>Successfully Given To {receiver_id}</b></blockquote>\n"
-                f"<blockquote><b>Information As Follows</b></blockquote>\n"
-                f"<blockquote><b> 🎏 𝙍𝙖𝙧𝙞𝙩𝙮: {character['rarity']}</b></blockquote>\n"
-                f"<blockquote><b>🎐 𝘼𝙣𝙞𝙢𝙚: {character['anime']}</b></blockquote>\n"
-                f"<blockquote><b>💕 𝙉𝙖𝙢𝙚: {character['name']}</b></blockquote>\n"
-                f"<blockquote><b>🪅 𝙄𝘿: {character['id']}</b></blockquote>"
+                f"Successfully Given To {receiver_id}\n"
+                f"Information As Follows\n"
+                f"⫸Rarity: {character['rarity']}\n"
+                f"⫸Anime: {character['anime']}\n"
+                f"⫸Name: {character['name']}\n"
+                f"⫸ID: {character['id']}"
             )
 
             return img_url, caption
@@ -103,13 +109,14 @@ async def kill_character(receiver_id, character_id):
                 {'$pull': {'characters': {'id': character_id}}}
             )
 
-            return f"Successfully removed character `{character_id}` from user `{receiver_id}`"
+            return f"⫸ Successfully removed character `{character_id}` from user `{receiver_id}`"
         except Exception as e:
             print(f"Error updating user: {e}")
             raise
     else:
         raise ValueError("Character not found.")
-
+    
+# <=================================== FOR REMOVE CHARACTER FROM USER ==============================================>
 @app.on_message(filters.command(["kill"]) & filters.reply & filters.user(DEV_LIST))
 async def remove_character_command(client, message):
     try:
