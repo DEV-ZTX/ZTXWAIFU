@@ -116,4 +116,4 @@ async def remove_character_command(client, message):
         await message.reply_text(str(e))
     except Exception as e:
         print(f"Error in remove_character_command: {e}")
-        await message.reply_text("An error occurred while processing the command."
+        await message.reply_text("An error occurred while processing the command.")
