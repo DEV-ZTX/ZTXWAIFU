@@ -141,7 +141,29 @@ async def fav(update: Update, context: CallbackContext) -> None:
 async def inlinequery(update: Update, context: CallbackContext) -> None:
     query = update.inline_query.query
     results = []
-    await update.inline_query.answer(results, cache_time=0, next_offset='')
+
+    if query.startswith('collection.'):
+        user_id = query.split('.')[1]
+        if not user_id.isdigit():
+            return
+        
+        user_data = await user_collection.find_one({'id': int(user_id)})
+        if not user_data or 'characters' not in user_data:
+            return
+        
+        for character in user_data['characters']:
+            results.append(
+                InlineQueryResultArticle(
+                    id=str(character['id']),
+                    title=character['name'],
+                    description=f"Anime: {character['anime']}\nRarity: {character['rarity']}",
+                    input_message_content=InputTextMessageContent(
+                        message_text=f"Character: {character['name']}\nAnime: {character['anime']}\nRarity: {character['rarity']}"
+                    )
+                )
+            )
+
+    await update.inline_query.answer(results, cache_time=0)
 
 application.add_handler(CommandHandler("guess", guess))
 application.add_handler(CommandHandler("fav", fav))
