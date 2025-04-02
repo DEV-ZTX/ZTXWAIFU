@@ -1,9 +1,5 @@
-#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-# For Waifu/Husbando telegram bots.
-# Updated and Added new commands, features and style by https://github.com/lovetheticx
-#▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-
 from pyrogram import Client, filters
+from pyrogram.handlers import MessageHandler
 from shivu import db, collection, top_global_groups_collection, group_user_totals_collection, user_collection, user_totals_collection
 import asyncio
 from shivu import shivuu as app
@@ -11,7 +7,6 @@ from shivu import sudo_users
 
 DEV_LIST = [7678359785, 7757912959]
 
-# <======================================= GIVE COMMAND ==================================================>
 async def give_character(receiver_id, character_id):
     character = await collection.find_one({'id': character_id})
 
@@ -39,36 +34,26 @@ async def give_character(receiver_id, character_id):
     else:
         raise ValueError("Character not found.")
 
-@app.on_message(filters.command(["give"]) & filters.reply & filters.user(DEV_LIST))
-async def give_character_command(_, message):
-    # Check if a message is replied to
+async def give_character_command(client, message):
     if not message.reply_to_message:
         await message.reply_text("You need to reply to a user's message to give a character!")
         return
 
     try:
-        # Split the message to get the character ID
         character_id = str(message.text.split()[1])
         receiver_id = message.reply_to_message.from_user.id
-
-        # Call the function to give the character
         result = await give_character(receiver_id, character_id)
 
         if result:
-            # If successful, send the photo and caption
             img_url, caption = result
             await message.reply_photo(photo=img_url, caption=caption)
-
-    # Catch specific exceptions and provide appropriate messages
     except IndexError:
         await message.reply_text("Please provide a character ID.")
     except ValueError as e:
-        await message.reply_text(str(e))  # Specific error message from the function
+        await message.reply_text(str(e))
     except Exception as e:
         print(f"Error in give_character_command: {e}")
         await message.reply_text("An error occurred while processing the command.")
-
-
 
 async def add_all_characters_for_user(user_id):
     user = await user_collection.find_one({'id': user_id})
@@ -92,12 +77,10 @@ async def add_all_characters_for_user(user_id):
     else:
         return f"User with ID {user_id} not found."
 
-@app.on_message(filters.command(["add"]) & filters.user(DEV_LIST))
 async def add_characters_command(client, message):
     user_id_to_add_characters_for = message.from_user.id
     result_message = await add_all_characters_for_user(user_id_to_add_characters_for)
     await message.reply_text(result_message)
-
 
 async def kill_character(receiver_id, character_id):
     character = await collection.find_one({'id': character_id})
@@ -115,19 +98,20 @@ async def kill_character(receiver_id, character_id):
             raise
     else:
         raise ValueError("Character not found.")
-    
-# <=================================== FOR REMOVE CHARACTER FROM USER ==============================================>
-@app.on_message(filters.command(["kill"]) & filters.reply & filters.user(DEV_LIST))
+
 async def remove_character_command(client, message):
     try:
         character_id = str(message.text.split()[1])
         receiver_id = message.reply_to_message.from_user.id
-
         result_message = await kill_character(receiver_id, character_id)
-
         await message.reply_text(result_message)
     except (IndexError, ValueError) as e:
         await message.reply_text(str(e))
     except Exception as e:
         print(f"Error in remove_character_command: {e}")
         await message.reply_text("An error occurred while processing the command.")
+
+# Manually adding handlers instead of using decorators
+app.add_handler(MessageHandler(give_character_command, filters.command(["give"]) & filters.reply & filters.user(DEV_LIST)))
+app.add_handler(MessageHandler(add_characters_command, filters.command(["add"]) & filters.user(DEV_LIST)))
+app.add_handler(MessageHandler(remove_character_command, filters.command(["kill"]) & filters.reply & filters.user(DEV_LIST)))
