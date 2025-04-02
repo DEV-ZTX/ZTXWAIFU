@@ -73,7 +73,7 @@ async def message_counter(update: Update, context: CallbackContext) -> None:
                     return
                 else:
                     
-                    await update.message.reply_html(f"<blockquote><b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</blockquote><b>")
+                    await update.message.reply_html(f"<blockquote><b>⚠️ {update.effective_user.first_name} ɪs ғʟᴏᴏᴅɪɴɢ:\nʙʟᴏᴄᴋᴇᴅ ғᴏʀ 𝟷𝟶 ᴍɪɴᴜᴛᴇs ғᴏʀ ᴜsɪɴɢ ᴛʜᴇ ʙᴏᴛ.</blockquote></b>")
                     warned_users[user_id] = time.time()
                     return
         else:
@@ -114,7 +114,7 @@ async def send_image(update: Update, context: CallbackContext) -> None:
     await context.bot.send_photo(
         chat_id=chat_id,
         photo=character['img_url'],
-        caption=f"""<blockquote><b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</blockquote><b>\n<blockquote><b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</blockquote><b>\n<blockquote><b>/grab ɴᴀᴍᴇ</blockquote><b>""",
+        caption=f"""<blockquote><b>{character['rarity'][0]}Oᴡᴏ! ᴀ {character['rarity'][2:]} ᴡᴀɪғᴜ ʜᴀs ᴀᴘᴘᴇᴀʀᴇᴅ!</blockquote></b>\n<blockquote><b>ᴀᴅᴅ ʜᴇʀ ᴛᴏ ʏᴏᴜʀ ʜᴀʀᴇᴍ ʙʏ sᴇɴᴅɪɴɢ</blockquote></b>\n<blockquote><b>/grab ɴᴀᴍᴇ</blockquote></b>""",
         parse_mode='HTML')
 
 
@@ -163,41 +163,43 @@ async def guess(update: Update, context: CallbackContext) -> None:
 
         keyboard = [[InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ", switch_inline_query_current_chat=f"collection.{user_id}")]]
 
-        await update.message.reply_text(f'✅ <b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You got a new waifu! \n\n🌸𝗡𝗔𝗠𝗘: <b>{last_characters[chat_id]["name"]}</b> \n❇️𝗔𝗡𝗜𝗠𝗘: <b>{last_characters[chat_id]["anime"]}</b> \n{last_characters[chat_id]["rarity"][0]}𝗥𝗔𝗜𝗥𝗧𝗬: <b>{last_characters[chat_id]["rarity"]}</b>\n\n⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
+        await update.message.reply_text(f'<blockquote><b>✅<a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a> You got a new character!</blockquote></b> \n\n<blockquote><b>🌸𝗡𝗔𝗠𝗘: {last_characters[chat_id]["name"]}</blockquote></b> \n<blockquote><b>❇️𝗔𝗡𝗜𝗠𝗘: {last_characters[chat_id]["anime"]}</blockquote></b> \n<blockquote><b>{last_characters[chat_id]["rarity"][0]}𝗥𝗔𝗜𝗥𝗧𝗬: {last_characters[chat_id]["rarity"]}</blockquote></b>\n\n<blockquote><b>⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds</blockquote></b>', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
     else:
         await update.message.reply_text('❌️<b>ᴄʜᴀʀᴀᴄᴛᴇʀ ɴᴀᴍᴇ ɪs ɴᴏᴛ ᴄᴏʀʀᴇᴄᴛ.ᴛʀʏ ɢᴜᴇssɪɴɢ ᴛʜᴇ ɴᴀᴍᴇ ᴀɢᴀɪɴ!</b>', parse_mode='HTML')
    
 
-"""async def fav(update: Update, context: CallbackContext) -> None:
-    user_id = update.effective_user.id
+"""async def fav(update: Update, context: CallbackContext) -> None: user_id = update.effective_user.id
 
-    if not context.args:
-        await update.message.reply_text('<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴡᴀɪғᴜ ɪᴅ ᴛᴏᴏ 🤖</b>', parse_mode='HTML')
-        return
+if not context.args:
+    await update.message.reply_text('<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴏsᴘʟᴀʏ ɪᴅ ᴛᴏᴏ 🤖</b>', parse_mode='HTML')
+    return
 
-    character_id = context.args[0]
+character_id = context.args[0]
 
-    user = await user_collection.find_one({'id': user_id})
-    if not user:
-        await update.message.reply_text('<b>ʏᴏᴜ ᴅᴏɴᴛ ʜᴀᴠᴇ ᴀɴʏ ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ 😢</b>', parse_mode='HTML')
-        return
+user = await user_collection.find_one({'id': user_id})
+if not user or 'characters' not in user:
+    await update.message.reply_text('<b>ʏᴏᴜ ᴅᴏɴᴛ ʜᴀᴠᴇ ᴀɴʏ ᴄᴏsᴘʟᴀʏ ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ 😢</b>', parse_mode='HTML')
+    return
 
-    character = next((c for c in user['characters'] if c['id'] == character_id), None)
-    if not character:
-        await update.message.reply_text('<b>ʏᴏᴜ ᴅᴏɴᴛ ᴏᴡɴ ᴛʜɪꜱ ᴡᴀɪꜰᴜ🤨</b>', parse_mode='HTML')
-        return
+character = next((c for c in user['characters'] if c.get('id') == character_id), None)
+if not character:
+    await update.message.reply_text('<b>ʏᴏᴜ ᴅᴏɴᴛ ᴏᴡɴ ᴛʜɪꜱ ᴄᴏsᴘʟᴀʏ💤</b>', parse_mode='HTML')
+    return
 
-    user['favorites'] = [character_id]
+user['favorites'] = [character_id]
 
-    await user_collection.update_one({'id': user_id}, {'$set': {'favorites': user['favorites']}})
+await user_collection.update_one({'id': user_id}, {'$set': {'favorites': user['favorites']}})
 
-    # Send the character's photo
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=character['img_url'],
-        caption=(f'<b>{character["rarity"][0]}ᴡᴀɪꜰᴜ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ʏᴏᴜʀ ꜰᴀᴠ\n\n ᴡᴀɪꜰᴜ ɴᴀᴍᴇ: {character["name"]}</b>'
-    ), parse_mode='HTML'
+# Send the character's photo
+await context.bot.send_photo(
+    chat_id=update.effective_chat.id,
+    photo=character.get('img_url', ''),
+    caption=(
+        f'<b>{character.get("rarity", "")[0]}ᴄᴏsᴘʟᴀʏ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ʏᴏᴜʀ ꜰᴀᴠ\n\n'
+        f'ᴡᴀɪꜰᴜ ɴᴀᴍᴇ: {character.get("name", "Unknown")}</b>'
+    ),
+    parse_mode='HTML'
 )
 
 """
@@ -206,19 +208,19 @@ async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
 
     if not context.args:
-        await update.message.reply_html('<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴡᴀɪғᴜ ɪᴅ ᴛᴏᴏ 🤖</b>')
+        await update.message.reply_html('<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴄᴏsᴘʟᴀʏ ɪᴅ ᴛᴏᴏ 🤖</b>')
         return
 
     character_id = context.args[0]
     user = await user_collection.find_one({'id': user_id})
 
     if not user:
-        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ʜᴀᴠᴇ ᴀɴʏ ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ 😢</b>')
+        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ʜᴀᴠᴇ ᴀɴʏ ᴄᴏsᴘʟᴀʏ ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ 😢</b>')
         return
 
     character = next((c for c in user['characters'] if c['id'] == character_id), None)
     if not character:
-        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ᴏᴡɴ ᴛʜɪꜱ ᴡᴀɪꜰᴜ🤨</b>')
+        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ᴏᴡɴ ᴛʜɪꜱ ᴄᴏsᴘʟᴀʏ 🍒</b>')
         return
 
     buttons = [
@@ -229,7 +231,7 @@ async def fav(update: Update, context: CallbackContext) -> None:
 
     await update.message.reply_photo(
         photo=character["img_url"],
-        caption=f"<b>Do you want to make this waifu your favorite..!</b>\n↬ <code>{character['name']}</code> <code>({character['anime']})</code>",
+        caption=f"<blockquote><b>Do you want to make this cosplay your favorite..!</blockquote></b>\n↬ <code>{character['name']}</code> <code>({character['anime']})</code>",
         reply_markup=reply_markup,
         parse_mode='HTML'
     )
@@ -242,7 +244,7 @@ async def handle_yes(update: Update, context: CallbackContext) -> None:
     character_id = query.data.split('_')[1]
 
     await user_collection.update_one({'id': user_id}, {'$set': {'favorites': [character_id]}})
-    await query.edit_message_caption(caption="<b>ᴡᴀɪғᴜ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>", parse_mode="HTML")
+    await query.edit_message_caption(caption="<b>ᴄᴏsᴘʟᴀʏ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>", parse_mode="HTML")
 
 async def handle_no(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
