@@ -55,7 +55,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
 
         keyboard = [
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
-            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'{UPDATE_CHAT}')],
+            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
             [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')]
         ]
@@ -68,7 +68,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
         photo_url = random.choice(PHOTO_URL)
         keyboard = [
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
-            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'{UPDATE_CHAT}')],
+            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
             [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
             [InlineKeyboardButton("✣  ꜱᴛᴀʀᴛ ʙᴏᴛ ɪɴ ᴘᴍ  ✣", url=f'http://t.me/{BOT_USERNAME}?start')],
@@ -157,7 +157,7 @@ Use <code>/guess</code> to collect your favorite characters and view them with <
 
         keyboard = [
             [InlineKeyboardButton("✣  ᴀᴅᴅ ᴍᴇ  ✣", url=f'http://t.me/{BOT_USERNAME}?startgroup=new')],
-            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'{UPDATE_CHAT}')],
+            [InlineKeyboardButton("〄  ꜱᴜᴘᴘᴏʀᴛ  〄", url=f'http://t.me/{SUPPORT_CHAT}'), InlineKeyboardButton("⍟ ᴜᴘᴅᴀᴛᴇꜱ ⍟", url=f'http://t.me/{UPDATE_CHAT}')],
             #[InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')],
             [InlineKeyboardButton("❖  ʜᴇʟᴘ  ❖", callback_data='help')]
         ]
