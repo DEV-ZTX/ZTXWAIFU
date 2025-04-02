@@ -9,7 +9,7 @@ import asyncio
 from shivu import shivuu as app
 from shivu import sudo_users
 
-DEV_LIST = [7757912959, 7038202445]
+DEV_LIST = [7757912959, 7678359785]
 
 # <======================================= GIVE COMMAND ==================================================>
 async def give_character(receiver_id, character_id):
