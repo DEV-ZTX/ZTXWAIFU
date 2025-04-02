@@ -241,7 +241,7 @@ async def error(update: Update, context: CallbackContext):
 
 # <============================================== HANDLERS ===========================================================>
     
-application.add_handler(CommandHandler("hmode", haremmode, block=False))
+application.add_handler(CommandHandler("cmode", haremmode, block=False))
 application.add_handler(CommandHandler("harem", harem, block=False))
 application.add_handler(CallbackQueryHandler(haremmode_callback, pattern='^rarity:'))
 application.add_handler(CallbackQueryHandler(change_rarity_mode_callback, pattern='^change_rarity_mode$', block=False))
