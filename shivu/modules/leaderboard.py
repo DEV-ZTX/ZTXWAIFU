@@ -36,9 +36,9 @@ for i, group in enumerate(leaderboard_data, start=1):
     leaderboard_message += f'┣ {i:02d}.  <b>{group_name}</b> ➾ <b>{count}</b>\n'
 
 leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-
-    photo_url = random.choice(PHOTO_URL)
-
+    photo_url = random.choice(PHOTO_URL)  # This should align properly
+    return photo_url
+    
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❂ ɢʟᴏʙᴀʟ ᴛᴏᴘ ❂", callback_data="global_users")],
         [InlineKeyboardButton("❖ ᴄʜᴀᴛ ᴛᴏᴘ ❖", callback_data="ctop")],
@@ -81,7 +81,8 @@ else:
         character_count = user['character_count']
         leaderboard_message += f"┣ {i:02d}. <a href='https://t.me/{username}'>{first_name}</a> ⇒ {character_count}\n"
     leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-    photo_url = random.choice(PHOTO_URL)
+    photo_url = random.choice(PHOTO_URL)  # This should align properly
+    return photo_url
 
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❂ ɢʟᴏʙᴀʟ ᴛᴏᴘ ❂", callback_data="global_users")],
@@ -123,8 +124,8 @@ else:
         leaderboard_message += f"┣ {i:02d}. <a href='https://t.me/{username}'>{first_name}</a> ⇒ {character_count}\n"
 
     leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-
-    photo_url = random.choice(PHOTO_URL)
+    photo_url = random.choice(PHOTO_URL)  # This should align properly
+    return photo_url
 
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❖ ᴄʜᴀᴛ ᴛᴏᴘ ❖", callback_data="ctop")],
