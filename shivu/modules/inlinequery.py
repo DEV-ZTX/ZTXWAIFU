@@ -74,26 +74,31 @@ def append_emoji_labels(character_name: str, caption: str) -> str:
     return caption
 
 async def inlinequery(update: Update, context: CallbackContext) -> None:
-    query = update.inline_query.query
+    query = update.inline_query.query.strip()
     offset = int(update.inline_query.offset) if update.inline_query.offset else 0
 
+    search_terms = query.split(" ")[1:] if query.startswith("collection.") else []  # ✅ Define search_terms
+
     if query.startswith('collection.'):
-        user_id = str(query.split(' ')[0].split('.')[1])  # Ensure it's a string, ' '.join(query.split(' ')[1:])
+        user_id = str(query.split(' ')[0].split('.')[1])  
         if user_id.isdigit():
             if user_id in user_collection_cache:
                 user = user_collection_cache[user_id]
             else:
-                user = await user_collection.find_one({'id': int(user_id)}) if user_id.isdigit() else None
+                user = await user_collection.find_one({'id': int(user_id)})
 
             if user:
-                all_characters = list({v['id']:v for v in user['characters']}.values())
+                all_characters = list({v['id']: v for v in user['characters']}.values())
+                
+                # ✅ Check if search_terms exist before applying regex
                 if search_terms:
                     regex = re.compile(' '.join(search_terms), re.IGNORECASE)
                     all_characters = [character for character in all_characters if regex.search(character['name']) or regex.search(character['anime'])]
-            else:
+             else:
                 all_characters = []
         else:
             all_characters = []
+
     else:
         if query:
             regex = re.compile(query, re.IGNORECASE)
