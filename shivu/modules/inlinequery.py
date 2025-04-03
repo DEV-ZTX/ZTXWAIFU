@@ -386,6 +386,7 @@ async def show_character_info(update: Update, context: CallbackContext) -> None:
 # Register the new handler
 application.add_handler(CallbackQueryHandler(show_character_info, pattern=r"^show_character_"))
 application.add_handler(CallbackQueryHandler(show_top_grabbers, pattern=r'^top_grabbers_\d+$'))
+application.add_handler(CommandHandler("haremmode", toggle_haremmode))
 application.add_handler(InlineQueryHandler(inlinequery, block=False))
 
 # by https://github.com/lovetheticx
