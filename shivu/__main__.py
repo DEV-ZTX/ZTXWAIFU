@@ -85,73 +85,75 @@ async def guess(update: Update, context: CallbackContext) -> None:
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
-    if chat_id not in sent_characters or not sent_characters[chat_id]:
-        await update.message.reply_text("❌ No character available to guess.")
+    if chat_id not in last_characters:
+        print(f"[ERROR] No character found for chat_id: {chat_id}")
         return
 
-    character = sent_characters[chat_id]  # Retrieve character object
-
-    if not context.args:
-        await update.message.reply_text("❌ Please provide a guess.")
+    guess = ' '.join(context.args).lower() if context.args else ''
+    
+    if "()" in guess or "&" in guess.lower():
+        await update.message.reply_html("<b>❌ You can't use these types of words.</b>")
         return
 
-    guess = ' '.join(context.args).strip().lower()
-    if any(banned in guess for banned in ["()", "&"]):
-        await update.message.reply_text("❌ Invalid Guess Format")
+    # Ensure last_character exists
+    character = last_characters.get(chat_id)
+    if not character:
+        print(f"[ERROR] last_characters[{chat_id}] is missing!")
         return
 
-    correct_name = character.get('name', '').lower()
-    name_variations = {correct_name, correct_name.replace(" ", ""), correct_name.replace("-", " "), correct_name.replace(".", "").strip()}
+    character_name = character['name'].lower()
+    name_parts = character_name.split()
 
-    # Flexible Matching
-    if guess in name_variations or any(guess == name_part for name_part in correct_name.split()):
+    # Ensure sent_characters exists
+    if chat_id not in sent_characters or character['id'] not in sent_characters[chat_id]:
+        print(f"[ERROR] sent_characters data is missing for chat_id: {chat_id}")
+        return
+
+    time_sent = sent_characters[chat_id][character['id']]
+    time_taken = time.time() - time_sent
+    minutes, seconds = divmod(int(time_taken), 60)
+
+    # Checking if guess matches character name
+    if sorted(name_parts) == sorted(guess.split()) or any(part == guess for part in name_parts):
         first_correct_guesses[chat_id] = user_id
 
-        await user_collection.update_one(
-            {'id': user_id}, 
-            {'$push': {'characters': character}}, 
-            upsert=True
+        user = await user_collection.find_one({'id': user_id})
+        if user:
+            update_fields = {}
+            if hasattr(update.effective_user, 'username') and update.effective_user.username != user.get('username'):
+                update_fields['username'] = update.effective_user.username
+            if update.effective_user.first_name != user.get('first_name'):
+                update_fields['first_name'] = update.effective_user.first_name
+            if update_fields:
+                await user_collection.update_one({'id': user_id}, {'$set': update_fields})
+
+            await user_collection.update_one({'id': user_id}, {'$push': {'characters': character}})
+        else:
+            new_user_data = {
+                'id': user_id,
+                'username': update.effective_user.username if hasattr(update.effective_user, 'username') else '',
+                'first_name': update.effective_user.first_name,
+                'characters': [character],
+            }
+            print(f"[INFO] Inserting new user: {new_user_data}")
+            await user_collection.insert_one(new_user_data)
+
+        keyboard = [[InlineKeyboardButton("🌐 See Collection", switch_inline_query_current_chat=f"collection.{user_id}")]]
+        message = (
+            f'✅ <b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You got a new waifu! \n\n'
+            f'🌸 𝗡𝗔𝗠𝗘: <b>{character["name"]}</b>\n'
+            f'❇️ 𝗔𝗡𝗜𝗠𝗘: <b>{character["anime"]}</b>\n'
+            f'{character["rarity"][0]} 𝗥𝗔𝗥𝗜𝗧𝗬: <b>{character["rarity"]}</b>\n\n'
+            f'⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds'
         )
 
-        del sent_characters[chat_id]  # Remove character after successful guess
+        await update.message.reply_text(message, parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
-        keyboard = [[InlineKeyboardButton("See Harem", switch_inline_query_current_chat=f"collection.{user_id}")]]
-        await update.message.reply_text(
-            f'<b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You Guessed a New Character ✅️\n\n'
-            f'𝗖𝗢𝗦𝗣𝗟𝗔𝗬: <b>{character["name"]}</b>\n'
-            f'𝗔𝗡𝗜𝗠𝗘: <b>{character["anime"]}</b>\n'
-            f'𝗥𝗔𝗜𝗥𝗧𝗬: <b>{character["rarity"]}</b>\n\n'
-            'Character added to Your harem!',
-            parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard)
-        )
     else:
-        await update.message.reply_text("❌ Wrong guess! Try again.")
-async def inlinequery(update: Update, context: CallbackContext) -> None:
-    query = update.inline_query.query
-    results = []
-
-    if query.startswith('collection.'):
-        user_id = query.split('.')[1]
-        if not user_id.isdigit():
-            return
-        
-        user_data = await user_collection.find_one({'id': int(user_id)})
-        if not user_data or 'characters' not in user_data:
-            return
-        
-        for character in user_data['characters']:
-            results.append(
-                InlineQueryResultArticle(
-                    id=str(character['id']),
-                    title=character['name'],
-                    description=f"Anime: {character['anime']}\nRarity: {character['rarity']}",
-                    input_message_content=InputTextMessageContent(
-                        message_text=f"Character: {character['name']}\nAnime: {character['anime']}\nRarity: {character['rarity']}"
-                    )
-                )
-            )
-
-    await update.inline_query.answer(results, cache_time=0)
+        print(f"[INFO] Incorrect guess from {user_id}: {guess}")
+        await update.message.reply_text(
+            '❌ <b>Character name is incorrect. Try guessing again!</b>', parse_mode='HTML'
+        )
 
 async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
