@@ -16,23 +16,26 @@ from shivu import (application, PHOTO_URL, OWNER_ID,
 # <======================================= GLOBAL TOP GROUPS ==================================================>
 async def global_leaderboard(update: Update, context: CallbackContext, query=None) -> None:
     cursor = top_global_groups_collection.aggregate([
-        {"$project": {"group_name": 1, "count": 1}},
-        {"$sort": {"count": -1}},
-        {"$limit": 10}
-    ])
-    leaderboard_data = await cursor.to_list(length=10)
+    {"$project": {"group_id": 1, "group_name": 1, "count": 1}},
+    {"$sort": {"count": -1}},
+    {"$limit": 10}
+])
+leaderboard_data = await cursor.to_list(length=10)
 
-    leaderboard_message = "<b>⛩️ 𝗧𝗢𝗣 𝟭𝟬 𝗚𝗟𝗢𝗕𝗔𝗟 𝗚𝗥𝗢𝗨𝗣𝗦:</b>\n\n"
-    leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
+leaderboard_message = "<b>⛩️ 𝗧𝗢𝗣 𝟭𝟬 𝗚𝗟𝗢𝗕𝗔𝗟 𝗚𝗥𝗢𝗨𝗣𝗦:</b>\n\n"
+leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
 
-    for i, group in enumerate(leaderboard_data, start=1):
-        group_name = html.escape(group.get('group_name', 'Unknown'))
+for i, group in enumerate(leaderboard_data, start=1):
+    group_id = group.get('group_id', 'Unknown')
+    group_name = html.escape(group.get('group_name', 'Unknown'))
 
-        if len(group_name) > 10:
-            group_name = group_name[:15] + '...'
-        count = group['count']
-        leaderboard_message += f'┣ {i:02d}.  <b>{group_name}</b> ➾ <b>{count}</b>\n'
-    leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
+    if group_name == "Unknown":
+        group_name = f"Group ID {group_id}"  # Show group ID if name is missing
+
+    count = group.get('count', 0)
+    leaderboard_message += f'┣ {i:02d}.  <b>{group_name}</b> ➾ <b>{count}</b>\n'
+
+leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
 
     photo_url = random.choice(PHOTO_URL)
 
@@ -65,9 +68,14 @@ async def ctop(update: Update, context: CallbackContext, query=None) -> None:
     leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
 
     for i, user in enumerate(leaderboard_data, start=1):
-        username = user.get('username', 'Unknown')
-        first_name = html.escape(user.get('first_name', 'Unknown'))
+        username = user.get('username')
+first_name = html.escape(user.get('first_name', 'Unknown'))
 
+if not username:  
+    user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
+else:  
+    user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
+        
         if len(first_name) > 10:
             first_name = first_name[:15] + '...'
         character_count = user['character_count']
@@ -101,8 +109,13 @@ async def global_users_leaderboard(update: Update, context: CallbackContext, que
     leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
 
     for i, user in enumerate(leaderboard_data, start=1):
-        username = user.get('username', 'Unknown')
-        first_name = html.escape(user.get('first_name', 'Unknown'))
+        username = user.get('username')
+first_name = html.escape(user.get('first_name', 'Unknown'))
+
+if not username:  
+    user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
+else:  
+    user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
 
         if len(first_name) > 10:
             first_name = first_name[:15] + '...'
