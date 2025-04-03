@@ -16,33 +16,32 @@ from shivu import (application, PHOTO_URL, OWNER_ID,
 # <======================================= GLOBAL TOP GROUPS ==================================================>
 async def global_leaderboard(update: Update, context: CallbackContext, query=None) -> None:
     cursor = top_global_groups_collection.aggregate([
-    {"$project": {"group_id": 1, "group_name": 1, "count": 1}},
-    {"$sort": {"count": -1}},
-    {"$limit": 10}
-])
-leaderboard_data = await cursor.to_list(length=10)
+        {"$project": {"group_id": 1, "group_name": 1, "count": 1}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ])
+    leaderboard_data = await cursor.to_list(length=10)
 
-leaderboard_message = "<b>⛩️ 𝗧𝗢𝗣 𝟭𝟬 𝗚𝗟𝗢𝗕𝗔𝗟 𝗚𝗥𝗢𝗨𝗣𝗦:</b>\n\n"
-leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
+    leaderboard_message = "<b>⛩️ 𝗧𝗢𝗣 𝟭𝟬 𝗚𝗟𝗢𝗕𝗔𝗟 𝗚𝗥𝗢𝗨𝗣𝗦:</b>\n\n"
+    leaderboard_message += "┏━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┓\n"
 
-for i, group in enumerate(leaderboard_data, start=1):
-    group_id = group.get('group_id', 'Unknown')
-    group_name = html.escape(group.get('group_name', 'Unknown'))
+    for i, group in enumerate(leaderboard_data, start=1):
+        group_id = group.get('group_id', 'Unknown')
+        group_name = html.escape(group.get('group_name', 'Unknown'))
 
-    if group_name == "Unknown":
-        group_name = f"Group ID {group_id}"  # Show group ID if name is missing
+        if group_name == "Unknown":
+            group_name = f"Group ID {group_id}"  # Show group ID if name is missing
 
-    count = group.get('count', 0)
-    leaderboard_message += f'┣ {i:02d}.  <b>{group_name}</b> ➾ <b>{count}</b>\n'
+        count = group.get('count', 0)
+        leaderboard_message += f'┣ {i:02d}.  <b>{group_name}</b> ➾ <b>{count}</b>\n'
 
-leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-    photo_url = random.choice(PHOTO_URL)  # This should align properly
-    return photo_url
+    leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
+
+    photo_url = random.choice(PHOTO_URL)  # Ensure correct indentation
     
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❂ ɢʟᴏʙᴀʟ ᴛᴏᴘ ❂", callback_data="global_users")],
         [InlineKeyboardButton("❖ ᴄʜᴀᴛ ᴛᴏᴘ ❖", callback_data="ctop")],
-        #[InlineKeyboardButton("Show Global Top Groups", callback_data="global")],⌬
         [InlineKeyboardButton("⊗ ᴄʟᴏꜱᴇ ⊗", callback_data="close")]
     ])
 
@@ -69,24 +68,25 @@ async def ctop(update: Update, context: CallbackContext, query=None) -> None:
 
     for i, user in enumerate(leaderboard_data, start=1):
         username = user.get('username')
-first_name = html.escape(user.get('first_name', 'Unknown'))
+        first_name = html.escape(user.get('first_name', 'Unknown'))
 
-if not username:  
-    user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
-else:  
-    user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
-        
+        if not username:  
+            user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
+        else:  
+            user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
+
         if len(first_name) > 10:
             first_name = first_name[:15] + '...'
-        character_count = user['character_count']
-        leaderboard_message += f"┣ {i:02d}. <a href='https://t.me/{username}'>{first_name}</a> ⇒ {character_count}\n"
-    leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-    photo_url = random.choice(PHOTO_URL)  # This should align properly
-    return photo_url
 
+        character_count = user['character_count']
+        leaderboard_message += f"┣ {i:02d}. {user_link} ⇒ {character_count}\n"
+
+    leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
+
+    photo_url = random.choice(PHOTO_URL)  # Ensure correct indentation
+    
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❂ ɢʟᴏʙᴀʟ ᴛᴏᴘ ❂", callback_data="global_users")],
-        #[InlineKeyboardButton("Show Chat Top Users", callback_data="ctop")],
         [InlineKeyboardButton("▣ ᴛᴏᴘ ɢʀᴏᴜᴘꜱ ▣", callback_data="global")],
         [InlineKeyboardButton("⊗ ᴄʟᴏꜱᴇ ⊗", callback_data="close")]
     ])
@@ -96,7 +96,6 @@ else:
     else:
         message = await update.message.reply_photo(photo=photo_url, caption=leaderboard_message, parse_mode='HTML', reply_markup=keyboard)
         context.chat_data['leaderboard_message_id'] = message.message_id
-
 # <======================================= GLOBAL TOP USERS ==================================================>
 async def global_users_leaderboard(update: Update, context: CallbackContext, query=None) -> None:
     cursor = user_collection.aggregate([
@@ -111,21 +110,22 @@ async def global_users_leaderboard(update: Update, context: CallbackContext, que
 
     for i, user in enumerate(leaderboard_data, start=1):
         username = user.get('username')
-first_name = html.escape(user.get('first_name', 'Unknown'))
+        first_name = html.escape(user.get('first_name', 'Unknown'))
 
-if not username:  
-    user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
-else:  
-    user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
+        if not username:  
+            user_link = f"<a href='tg://user?id={user['_id']}'>{first_name}</a>"  
+        else:  
+            user_link = f"<a href='https://t.me/{username}'>{first_name}</a>"
 
         if len(first_name) > 10:
             first_name = first_name[:15] + '...'
+
         character_count = user['character_count']
-        leaderboard_message += f"┣ {i:02d}. <a href='https://t.me/{username}'>{first_name}</a> ⇒ {character_count}\n"
+        leaderboard_message += f"┣ {i:02d}. {user_link} ⇒ {character_count}\n"
 
     leaderboard_message += "┗━┅┅┄┄⟞⟦🌐⟧⟝┄┄┉┉━┛\n"
-    photo_url = random.choice(PHOTO_URL)  # This should align properly
-    return photo_url
+
+    photo_url = random.choice(PHOTO_URL)  # Ensure this is placed correctly
 
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("❖ ᴄʜᴀᴛ ᴛᴏᴘ ❖", callback_data="ctop")],
@@ -138,7 +138,6 @@ else:
     else:
         message = await update.message.reply_photo(photo=photo_url, caption=leaderboard_message, parse_mode='HTML', reply_markup=keyboard)
         context.chat_data['leaderboard_message_id'] = message.message_id
-
 # <======================================= CALLBACK ==================================================>
 async def callback_query(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
