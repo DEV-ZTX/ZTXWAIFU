@@ -201,6 +201,11 @@ async def handle_no(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     await query.answer("Okay, no worries!")
     await query.edit_message_caption(caption="canceled.")
+
+async def inlinequery(update: Update, context: CallbackContext) -> None:
+    """Handles inline queries."""
+    results = []  # Define your inline query results
+    await update.inline_query.answer(results)
     
 def main() -> None:
     """Run bot."""
