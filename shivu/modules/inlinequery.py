@@ -322,7 +322,15 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     print("Received Callback Query:", query.data)  # Debugging
 
-    character_id = str(query.data.split('_')[1])  # Fix index
+    # Extract character_id from callback data
+    if query.data.startswith("show_top_grabbers_"):
+        character_id = query.data.replace("show_top_grabbers_", "")
+
+        try:
+            character_id = int(character_id)  # Ensure it's an integer
+        except ValueError:
+            await query.answer("Invalid character ID.", show_alert=True)
+            return
 
     cursor = user_collection.aggregate([
         {"$match": {"characters.id": character_id}},
@@ -347,22 +355,27 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     leaderboard_data = await cursor.to_list(length=10)
 
     if not leaderboard_data:
-        leaderboard_message = "<b>No grabbers found for this character.</b>"
-    else:
-        leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄʜᴀʀᴀᴄᴛᴇʀ:</b>\n\n"
+        # If no grabbers found, inform the user via an alert
+        await query.answer("No grabbers found for this character.", show_alert=True)
+        return  # Exit the function early
 
-        for i, user in enumerate(leaderboard_data, start=1):
-            username = user.get('username')
-            first_name = user.get('first_name', 'Unknown')
+    # Format the leaderboard message
+    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄʜᴀʀᴀᴄᴛᴇʀ:</b>\n\n"
 
-            if username:
-                display_name = f"<a href='https://t.me/{username}'>{html.escape(first_name)}</a>"
-            else:
-                display_name = html.escape(first_name)
+    for i, user in enumerate(leaderboard_data, start=1):
+        username = user.get('username')
+        first_name = user.get('first_name', 'Unknown')
 
-            character_count = user.get('character_count', 0)
-            leaderboard_message += f"┣ {i:02d}.➥ {display_name} ➩ {character_count}\n"
+        if username:
+            display_name = f"<a href='https://t.me/{username}'>{html.escape(first_name)}</a>"
+        else:
+            display_name = html.escape(first_name)
 
+        character_count = user.get('character_count', 0)
+        leaderboard_message += f"┣ {i:02d}.➥ {display_name} ➩ {character_count}\n"
+
+    # Send the leaderboard message
+    await query.message.reply_text(leaderboard_message, parse_mode="HTML")
     await query.answer()  # Acknowledge button press
 
     await query.edit_message_text(
