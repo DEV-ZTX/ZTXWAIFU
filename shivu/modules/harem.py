@@ -66,7 +66,7 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
 
     total_count = len(user['characters'])
     keyboard = [
-        [InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ ({total_count})", switch_inline_query=f"collection.{user_id}")],
+        [InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ ({total_count})", switch_inline_query_current_chat=f"collection.{user_id}")],
         [InlineKeyboardButton("ᴄʜᴀɴɢᴇ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ", callback_data="change_rarity_mode")]]
     
     if total_pages > 1:
