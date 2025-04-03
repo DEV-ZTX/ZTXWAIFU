@@ -320,7 +320,13 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
 async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    character_id = query.data.split('_')[2]
+
+    # Ensure callback data format is correct
+    if not query.data.startswith("top_grabbers_"):
+        await query.answer("Invalid data!", show_alert=True)
+        return
+
+    character_id = query.data.split('_', 2)[2]
 
     # Fetch top 10 users who grabbed this character
     cursor = user_collection.aggregate([
@@ -341,15 +347,28 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
         {"$sort": {"character_count": -1}},
         {"$limit": 10}
     ])
+
     leaderboard_data = await cursor.to_list(length=10)
-    
-    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴡᴀɪꜰᴜ:</b>\n\n"
+
+    # Check if data exists
+    if not leaderboard_data:
+        await query.answer("No data found!", show_alert=True)
+        return
+
+    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄᴏsᴘʟᴀʏ:</b>\n\n"
     for i, user in enumerate(leaderboard_data, start=1):
         username = user.get('username', 'Unknown')
         first_name = html.escape(user.get('first_name', 'Unknown'))
         character_count = user.get('character_count', 0)
         leaderboard_message += f"┣ {i:02d}.➥ <a href='https://t.me/{username}'>{first_name}</a> ➩ {character_count}\n"
 
+    # Add "Back" button
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("↻ ʙᴀᴄᴋ", callback_data=f"show_character_{character_id}")]
+    ])
+
+    await query.answer()
+    await query.edit_message_text(text=leaderboard_message, parse_mode='HTML', reply_markup=keyboard)
     # Add "Back" button
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("↻ ʙᴀᴄᴋ", callback_data=f"show_character_{character_id}")]
@@ -373,7 +392,7 @@ async def show_character_info(update: Update, context: CallbackContext) -> None:
     anime_characters = await collection.count_documents({'anime': character['anime']})
 
     caption = (
-        f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs Wᴀɪғᴜ....!!</b>\n\n"
+        f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs ᴄʜᴀʀᴀᴄᴛᴇʀ....!!</b>\n\n"
         f"<b>{character['id']}:</b> {character['name']}\n"
         f"<b>{character['anime']}</b>\n"
         f"( <b>{character['rarity'][0]} 𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]} )"
