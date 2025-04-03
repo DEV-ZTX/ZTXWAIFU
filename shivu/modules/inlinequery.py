@@ -89,20 +89,24 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
             if user:
                 all_characters = list({v['id']: v for v in user['characters']}.values())
-                
+
                 # ✅ Check if search_terms exist before applying regex
                 if search_terms:
                     regex = re.compile(' '.join(search_terms), re.IGNORECASE)
-                    all_characters = [character for character in all_characters if regex.search(character['name']) or regex.search(character['anime'])]
-             else:
+                    all_characters = [
+                        character for character in all_characters
+                        if regex.search(character['name']) or regex.search(character['anime'])
+                    ]
+            else:
                 all_characters = []
         else:
             all_characters = []
-
-    else:
+    else:  # ✅ Ensure this aligns properly
         if query:
             regex = re.compile(query, re.IGNORECASE)
-            all_characters = list(await collection.find({"$or": [{"name": regex}, {"anime": regex}]}).to_list(length=None))
+            all_characters = list(
+                await collection.find({"$or": [{"name": regex}, {"anime": regex}]}).to_list(length=None)
+            )
         else:
             if 'all_characters' in all_characters_cache:
                 all_characters = all_characters_cache['all_characters']
