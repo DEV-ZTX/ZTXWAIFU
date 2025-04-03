@@ -207,10 +207,9 @@ application.add_handler(CommandHandler("guess", guess))
 application.add_handler(CommandHandler("fav", fav))
 application.add_handler(InlineQueryHandler(inlinequery))
 application.add_handler(CallbackQueryHandler(handle_yes, pattern="yes_*"))
-    application.add_handler(CallbackQueryHandler(handle_no, pattern="no_*"))
-    #application.add_handler(CommandHandler("fav", fav, block=False))
-    application.add_handler(MessageHandler(filters.ALL, message_counter, block=False))
-
+application.add_handler(CallbackQueryHandler(handle_no, pattern="no_*"))  # FIXED INDENTATION
+# application.add_handler(CommandHandler("fav", fav, block=False))
+application.add_handler(MessageHandler(filters.ALL, message_counter, block=False))
     application.run_polling(drop_pending_updates=True)
 
 if __name__ == "__main__":
