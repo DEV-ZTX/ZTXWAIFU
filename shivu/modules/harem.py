@@ -62,7 +62,7 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
             harem_message += f'➥{character["id"]} | {character["rarity"][0]} | {character["name"]} ×{count}\n'
         harem_message += "⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n"
     
-    keyboard = [[InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ ({len(user['characters'])})", switch_inline_query_current_chat=f"collection.{user_id}")],
+    keyboard = [[InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ ({len(user['characters'])})", switch_inline_query=f"collection {user_id}")],
                 [InlineKeyboardButton("ᴄʜᴀɴɢᴇ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ", callback_data="change_rarity_mode")]]
     
     if total_pages > 1:
@@ -142,16 +142,14 @@ async def haremmode(update: Update, context: CallbackContext):
         
 async def harem_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
+    print(f"Received callback: {query.data}")  # Debugging line
+
     try:
         _, page, user_id = query.data.split(':')
         page = int(page)
         user_id = int(user_id)
     except ValueError:
         await query.answer("Invalid callback data", show_alert=True)
-        return
-
-    if query.from_user.id != user_id:
-        await query.answer("𝗗𝗢𝗡𝗧 𝗧𝗢𝗨𝗖𝗛 𝗔𝗪𝗪 💢", show_alert=True)
         return
 
     await harem(update, context, page)
@@ -175,11 +173,9 @@ async def change_rarity_mode_callback(update: Update, context: CallbackContext) 
 async def haremmode_callback(update: Update, context: CallbackContext):
     query = update.callback_query
     user_id = update.effective_user.id
+    print(f"Received callback data: {query.data}")  # Debugging
 
-    # Retrieve the ID of the user who issued the /harem command
     harem_owner_id = context.user_data.get("harem_owner_id")
-
-    # Check if the user pressing the button is the harem owner
     if user_id != harem_owner_id:
         await query.answer("𝗗𝗢𝗡𝗧 𝗧𝗢𝗨𝗖𝗛 𝗔𝗪𝗪 💢", show_alert=True)
         return
@@ -190,20 +186,18 @@ async def haremmode_callback(update: Update, context: CallbackContext):
         return
 
     rarity_mode = data[1]
+    print(f"Changing rarity mode to: {rarity_mode}")  # Debugging
 
     await update_user_rarity_mode(user_id, rarity_mode)
     await harem(update, context)
-
 
 # <======================================== Haremmode Command ===================================================>
 # <==================================== Getting for User Rarity Mode ==================================================>
     
 async def get_user_rarity_mode(user_id: int) -> str:
     user = await user_collection.find_one({'id': user_id})
+    print(f"User data for rarity mode: {user}")  # Debugging
     return user.get('rarity_mode', 'ᴅᴇꜰᴀᴜʟᴛ') if user else 'ᴅᴇꜰᴀᴜʟᴛ'
-
-async def update_user_rarity_mode(user_id: int, rarity_mode: str) -> None:
-    await user_collection.update_one({'id': user_id}, {'$set': {'rarity_mode': rarity_mode}}, upsert=True)
 
 # <============================================== FOR ERRORS =========================================================>
     
@@ -214,9 +208,9 @@ async def error(update: Update, context: CallbackContext):
     
 application.add_handler(CommandHandler("cmode", haremmode, block=False))
 application.add_handler(CommandHandler("harem", harem, block=False))
-application.add_handler(CallbackQueryHandler(haremmode_callback, pattern='^rarity:'))
-application.add_handler(CallbackQueryHandler(change_rarity_mode_callback, pattern='^change_rarity_mode$', block=False))
-application.add_handler(CallbackQueryHandler(harem_callback, pattern='^harem', block=False))
+application.add_handler(CallbackQueryHandler(haremmode_callback, pattern=r"^rarity:"))
+application.add_handler(CallbackQueryHandler(change_rarity_mode_callback, pattern=r"^change_rarity_mode$"))
+application.add_handler(CallbackQueryHandler(harem_callback, pattern=r"^harem"))
 application.add_error_handler(error)
 
 # <============================================== END ================================================================>
