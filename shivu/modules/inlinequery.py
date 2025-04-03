@@ -320,13 +320,14 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
 async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    character_id = query.data.split('_')[2]
+    print("Received Callback Query:", query.data)  # Debugging
 
-    # Fetch top 10 users who grabbed this character
+    character_id = str(query.data.split('_')[1])  # Fix index
+
     cursor = user_collection.aggregate([
         {"$match": {"characters.id": character_id}},
         {"$project": {
-            "user_id": 1,  # Debugging: Fetch user_id to verify correct users
+            "user_id": 1,
             "username": 1,
             "first_name": 1,
             "character_count": {
@@ -345,24 +346,30 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
 
     leaderboard_data = await cursor.to_list(length=10)
 
-    # Debugging: Print fetched leaderboard data
-    print("Leaderboard Data:", leaderboard_data)
+    if not leaderboard_data:
+        leaderboard_message = "<b>No grabbers found for this character.</b>"
+    else:
+        leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄʜᴀʀᴀᴄᴛᴇʀ:</b>\n\n"
 
-    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄʜᴀʀᴀᴄᴛᴇʀ:</b>\n\n"
+        for i, user in enumerate(leaderboard_data, start=1):
+            username = user.get('username')
+            first_name = user.get('first_name', 'Unknown')
 
-    for i, user in enumerate(leaderboard_data, start=1):
-        username = user.get('username')  # Ensure username is fetched properly
-        first_name = user.get('first_name', 'Unknown')
+            if username:
+                display_name = f"<a href='https://t.me/{username}'>{html.escape(first_name)}</a>"
+            else:
+                display_name = html.escape(first_name)
 
-        # Display name logic: Prefer username link if available
-        if username:
-            display_name = f"<a href='https://t.me/{username}'>{html.escape(first_name)}</a>"
-        else:
-            display_name = html.escape(first_name)
+            character_count = user.get('character_count', 0)
+            leaderboard_message += f"┣ {i:02d}.➥ {display_name} ➩ {character_count}\n"
 
-        character_count = user.get('character_count', 0)
-        leaderboard_message += f"┣ {i:02d}.➥ {display_name} ➩ {character_count}\n"
+    await query.answer()  # Acknowledge button press
 
+    await query.edit_message_text(
+        text=leaderboard_message,
+        parse_mode='HTML',
+        disable_web_page_preview=True
+    )
     # Add "Back" button
     keyboard = InlineKeyboardMarkup([
         [InlineKeyboardButton("↻ ʙᴀᴄᴋ", callback_data=f"show_character_{character_id}")]
@@ -419,7 +426,7 @@ async def show_character_info(update: Update, context: CallbackContext) -> None:
 
 # Register the new handler
 application.add_handler(CallbackQueryHandler(show_character_info, pattern=r"^show_character_"))
-application.add_handler(CallbackQueryHandler(show_top_grabbers, pattern=r'^top_grabbers_\d+$'))
+application.add_handler(CallbackQueryHandler(show_top_grabbers, pattern=r"^show_top_grabbers_\d+$"))
 application.add_handler(InlineQueryHandler(inlinequery, block=False))
 
 # by https://github.com/lovetheticx
