@@ -62,8 +62,9 @@ async def harem(update: Update, context: CallbackContext, page=0) -> None:
             harem_message += f'➥{character["id"]} | {character["rarity"][0]} | {character["name"]} ×{count}\n'
         harem_message += "⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋⚋\n"
         
-    total_count = len(characters)  # Add this to define total_count
-    
+    harem_message = harem_message[:MAX_CAPTION_LENGTH]
+
+    total_count = len(user['characters'])
     keyboard = [
         [InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ ({total_count})", switch_inline_query=f"collection.{user_id}")],
         [InlineKeyboardButton("ᴄʜᴀɴɢᴇ ʀᴀʀɪᴛʏ ᴍᴏᴅᴇ", callback_data="change_rarity_mode")]]
