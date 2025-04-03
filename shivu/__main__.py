@@ -119,28 +119,42 @@ async def send_image(update: Update, context: CallbackContext) -> None:
 
 
 async def guess(update: Update, context: CallbackContext) -> None:
+async def guess(update: Update, context: CallbackContext) -> None:
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
     if chat_id not in last_characters:
+        print(f"[ERROR] No character found for chat_id: {chat_id}")
         return
 
     guess = ' '.join(context.args).lower() if context.args else ''
     
     if "()" in guess or "&" in guess.lower():
-        await update.message.reply_html("<b>❌️ ʏᴏᴜ ᴄᴀɴ'ᴛ ᴜꜱᴇ ᴛʜɪꜱ ᴛʏᴘᴇꜱ ᴏꜰ ᴡᴏʀᴅꜱ.</b>")
+        await update.message.reply_html("<b>❌ You can't use these types of words.</b>")
         return
 
-    name_parts = last_characters[chat_id]['name'].lower().split()
+    # Ensure last_character exists
+    character = last_characters.get(chat_id)
+    if not character:
+        print(f"[ERROR] last_characters[{chat_id}] is missing!")
+        return
 
+    character_name = character['name'].lower()
+    name_parts = character_name.split()
+
+    # Ensure sent_characters exists
+    if chat_id not in sent_characters or character['id'] not in sent_characters[chat_id]:
+        print(f"[ERROR] sent_characters data is missing for chat_id: {chat_id}")
+        return
+
+    time_sent = sent_characters[chat_id][character['id']]
+    time_taken = time.time() - time_sent
+    minutes, seconds = divmod(int(time_taken), 60)
+
+    # Checking if guess matches character name
     if sorted(name_parts) == sorted(guess.split()) or any(part == guess for part in name_parts):
-        # Calculate the time taken
-        time_sent = sent_characters[chat_id].get(last_characters[chat_id]['id'], time.time())
-        time_taken = time.time() - time_sent
-        minutes, seconds = divmod(int(time_taken), 60)
-        
         first_correct_guesses[chat_id] = user_id
-        
+
         user = await user_collection.find_one({'id': user_id})
         if user:
             update_fields = {}
@@ -150,25 +164,34 @@ async def guess(update: Update, context: CallbackContext) -> None:
                 update_fields['first_name'] = update.effective_user.first_name
             if update_fields:
                 await user_collection.update_one({'id': user_id}, {'$set': update_fields})
-            
-            await user_collection.update_one({'id': user_id}, {'$push': {'characters': last_characters[chat_id]}})
-      
-        elif hasattr(update.effective_user, 'username'):
-            await user_collection.insert_one({
+
+            await user_collection.update_one({'id': user_id}, {'$push': {'characters': character}})
+        else:
+            new_user_data = {
                 'id': user_id,
-                'username': update.effective_user.username,
+                'username': update.effective_user.username if hasattr(update.effective_user, 'username') else '',
                 'first_name': update.effective_user.first_name,
-                'characters': [last_characters[chat_id]],
-            })
+                'characters': [character],
+            }
+            print(f"[INFO] Inserting new user: {new_user_data}")
+            await user_collection.insert_one(new_user_data)
 
-        keyboard = [[InlineKeyboardButton(f"🌐 ꜱᴇᴇ ᴄᴏʟʟᴇᴄᴛɪᴏɴ", switch_inline_query_current_chat=f"collection.{user_id}")]]
+        keyboard = [[InlineKeyboardButton("🌐 See Collection", switch_inline_query_current_chat=f"collection.{user_id}")]]
+        message = (
+            f'✅ <b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You got a new waifu! \n\n'
+            f'🌸 𝗡𝗔𝗠𝗘: <b>{character["name"]}</b>\n'
+            f'❇️ 𝗔𝗡𝗜𝗠𝗘: <b>{character["anime"]}</b>\n'
+            f'{character["rarity"][0]} 𝗥𝗔𝗥𝗜𝗧𝗬: <b>{character["rarity"]}</b>\n\n'
+            f'⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds'
+        )
 
-        await update.message.reply_text(f'✅ <b><a href="tg://user?id={user_id}">{escape(update.effective_user.first_name)}</a></b> You got a new waifu! \n\n🌸𝗡𝗔𝗠𝗘: <b>{last_characters[chat_id]["name"]}</b> \n❇️𝗔𝗡𝗜𝗠𝗘: <b>{last_characters[chat_id]["anime"]}</b> \n{last_characters[chat_id]["rarity"][0]}𝗥𝗔𝗜𝗥𝗧𝗬: <b>{last_characters[chat_id]["rarity"]}</b>\n\n⌛️ 𝗧𝗜𝗠𝗘 𝗧𝗔𝗞𝗘𝗡: {minutes} minutes and {seconds} seconds', parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
+        await update.message.reply_text(message, parse_mode='HTML', reply_markup=InlineKeyboardMarkup(keyboard))
 
     else:
-        await update.message.reply_text('❌️<b>ᴄʜᴀʀᴀᴄᴛᴇʀ ɴᴀᴍᴇ ɪs ɴᴏᴛ ᴄᴏʀʀᴇᴄᴛ.ᴛʀʏ ɢᴜᴇssɪɴɢ ᴛʜᴇ ɴᴀᴍᴇ ᴀɢᴀɪɴ!</b>', parse_mode='HTML')
-   
-
+        print(f"[INFO] Incorrect guess from {user_id}: {guess}")
+        await update.message.reply_text(
+            '❌ <b>Character name is incorrect. Try guessing again!</b>', parse_mode='HTML'
+        )
 """async def fav(update: Update, context: CallbackContext) -> None:
     user_id = update.effective_user.id
 
