@@ -212,7 +212,7 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
                     caption += "\n\n💍𝑾𝒆𝒅𝒅𝒊𝒏𝒈💍"
         else:
             caption = (
-            f"<b>Lᴏᴏᴋ Aᴛ Tʜɪs Wᴀɪғᴜ....!!!</b>\n\n"
+            f"<b>Look At This Cosplay....!!!</b>\n\n"
             f"<b>{character['anime']}</b>\n"
             f"<b>{character['id']}:</b> {character['name']}\n"
             f"( <b>{character['rarity'][0]}𝙍𝘼𝙍𝙄𝙏𝙔:</b> {character['rarity'][2:]} )"
@@ -302,7 +302,7 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
         
         # Add inline button for showing top grabbers
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ", callback_data=f"top_grabbers_{character['id']}")]
+            [InlineKeyboardButton("🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ", callback_data=f"show_top_grabbers_{character['id']}")]
         ])
 
         results.append(
@@ -320,18 +320,13 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
 async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-
-    # Ensure callback data format is correct
-    if not query.data.startswith("top_grabbers_"):
-        await query.answer("Invalid data!", show_alert=True)
-        return
-
-    character_id = query.data.split('_', 2)[2]
+    character_id = query.data.split('_')[2]
 
     # Fetch top 10 users who grabbed this character
     cursor = user_collection.aggregate([
         {"$match": {"characters.id": character_id}},
         {"$project": {
+            "user_id": 1,  # Debugging: Fetch user_id to verify correct users
             "username": 1,
             "first_name": 1,
             "character_count": {
@@ -350,17 +345,31 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
 
     leaderboard_data = await cursor.to_list(length=10)
 
-    # Check if data exists
-    if not leaderboard_data:
-        await query.answer("No data found!", show_alert=True)
-        return
+    # Debugging: Print fetched leaderboard data
+    print("Leaderboard Data:", leaderboard_data)
 
-    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄᴏsᴘʟᴀʏ:</b>\n\n"
+    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴄʜᴀʀᴀᴄᴛᴇʀ:</b>\n\n"
+
     for i, user in enumerate(leaderboard_data, start=1):
-        username = user.get('username', 'Unknown')
-        first_name = html.escape(user.get('first_name', 'Unknown'))
+        username = user.get('username')  # Ensure username is fetched properly
+        first_name = user.get('first_name', 'Unknown')
+
+        # Display name logic: Prefer username link if available
+        if username:
+            display_name = f"<a href='https://t.me/{username}'>{html.escape(first_name)}</a>"
+        else:
+            display_name = html.escape(first_name)
+
         character_count = user.get('character_count', 0)
-        leaderboard_message += f"┣ {i:02d}.➥ <a href='https://t.me/{username}'>{first_name}</a> ➩ {character_count}\n"
+        leaderboard_message += f"┣ {i:02d}.➥ {display_name} ➩ {character_count}\n"
+
+    # Add "Back" button
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("↻ ʙᴀᴄᴋ", callback_data=f"show_character_{character_id}")]
+    ])
+
+    await query.answer()
+    await query.edit_message_text(text=leaderboard_message, parse_mode='HTML', reply_markup=keyboard)
 
     # Add "Back" button
     keyboard = InlineKeyboardMarkup([
