@@ -320,7 +320,7 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
 async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
-    character_id = int(query.data.split('_')[2])  # Extract character ID from callback data
+    character_id = query.data.split('_')[2]
 
     # Fetch top 10 users who grabbed this character
     cursor = user_collection.aggregate([
@@ -342,16 +342,22 @@ async def show_top_grabbers(update: Update, context: CallbackContext) -> None:
         {"$limit": 10}
     ])
     leaderboard_data = await cursor.to_list(length=10)
-
-    # Create leaderboard message
-    leaderboard_message = "<b>🌐 Top 10 Grabbers of this Cosplay Character:</b>\n\n"
+    
+    leaderboard_message = "<b>🌐 ᴛᴏᴘ 10 ɢʀᴀʙʙᴇʀꜱ ᴏꜰ ᴛʜɪꜱ ᴡᴀɪꜰᴜ:</b>\n\n"
     for i, user in enumerate(leaderboard_data, start=1):
-        user_name = user.get("first_name", "Unknown")
-        character_count = user.get("character_count", 0)
-        leaderboard_message += f"{i}. {html.escape(user_name)} - {character_count} times\n"
+        username = user.get('username', 'Unknown')
+        first_name = html.escape(user.get('first_name', 'Unknown'))
+        character_count = user.get('character_count', 0)
+        leaderboard_message += f"┣ {i:02d}.➥ <a href='https://t.me/{username}'>{first_name}</a> ➩ {character_count}\n"
+
+    # Add "Back" button
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("↻ ʙᴀᴄᴋ", callback_data=f"show_character_{character_id}")]
+    ])
 
     await query.answer()
-    await query.message.reply_text(leaderboard_message, parse_mode="HTML")
+    await query.edit_message_text(text=leaderboard_message, parse_mode='HTML', reply_markup=keyboard)
+
 
 async def show_character_info(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
