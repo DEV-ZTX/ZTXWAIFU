@@ -153,11 +153,68 @@ async def inlinequery(update: Update, context: CallbackContext) -> None:
 
     await update.inline_query.answer(results, cache_time=0)
 
+async def fav(update: Update, context: CallbackContext) -> None:
+    user_id = update.effective_user.id
+
+    if not context.args:
+        await update.message.reply_html('<b>ɢɪᴠᴇ ᴍᴇ ᴀ ᴡᴀɪғᴜ ɪᴅ ᴛᴏᴏ 🤖</b>')
+        return
+
+    character_id = context.args[0]
+    user = await user_collection.find_one({'id': user_id})
+
+    if not user:
+        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ʜᴀᴠᴇ ᴀɴʏ ᴡᴀɪғᴜs ɪɴ ʏᴏᴜʀ ʜᴀʀᴇᴍ 😢</b>')
+        return
+
+    character = next((c for c in user['characters'] if c['id'] == character_id), None)
+    if not character:
+        await update.message.reply_html('<b>ʏᴏᴜ ᴅᴏɴᴛ ᴏᴡɴ ᴛʜɪꜱ ᴡᴀɪꜰᴜ🤨</b>')
+        return
+
+    buttons = [
+        [InlineKeyboardButton("🟢 Yes", callback_data=f"yes_{character_id}"), 
+         InlineKeyboardButton("🔴 No", callback_data=f"no_{character_id}")]
+    ]
+    reply_markup = InlineKeyboardMarkup(buttons)
+
+    await update.message.reply_photo(
+        photo=character["img_url"],
+        caption=f"<b>Do you want to make this waifu your favorite..!</b>\n↬ <code>{character['name']}</code> <code>({character['anime']})</code>",
+        reply_markup=reply_markup,
+        parse_mode='HTML'
+    )
+
+async def handle_yes(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    await query.answer()
+
+    user_id = query.from_user.id
+    character_id = query.data.split('_')[1]
+
+    await user_collection.update_one({'id': user_id}, {'$set': {'favorites': [character_id]}})
+    await query.edit_message_caption(caption="<b>ᴡᴀɪғᴜ ʜᴀs ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ sᴇᴛ ᴀs ᴀ ғᴀᴠᴏʀɪᴛᴇ!</b>", parse_mode="HTML")
+
+async def handle_no(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    await query.answer("Okay, no worries!")
+    await query.edit_message_caption(caption="canceled.")
+    
+def main() -> None:
+    """Run bot."""
+
 application.add_handler(CommandHandler("guess", guess))
 application.add_handler(CommandHandler("fav", fav))
-application.add_handler(MessageHandler(filters.ALL, message_counter))
 application.add_handler(InlineQueryHandler(inlinequery))
+application.add_handler(CallbackQueryHandler(handle_yes, pattern="yes_*"))
+    application.add_handler(CallbackQueryHandler(handle_no, pattern="no_*"))
+    #application.add_handler(CommandHandler("fav", fav, block=False))
+    application.add_handler(MessageHandler(filters.ALL, message_counter, block=False))
 
-if __name__ == "__main__":
     application.run_polling(drop_pending_updates=True)
 
+if __name__ == "__main__":
+    shivuu.start()
+    LOGGER.info("Bot started")
+    main()
+    
